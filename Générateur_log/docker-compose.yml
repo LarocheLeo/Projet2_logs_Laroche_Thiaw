@@ -1,0 +1,10 @@
+version: '3'
+services:
+  nginx:
+    build: .
+    image: generation_log
+    ports:
+      - "8080:80"
+    volumes:
+      - ./logs:/var/log/nginx  # Monter le répertoire de logs sur la machine hôte
+    restart: always            # Redémarrer automatiquement en cas de crash

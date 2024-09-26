@@ -1,0 +1,59 @@
+2024/09/24 14:01:27 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 14:06:36 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:32:50 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:32:53 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:32:56 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:33:00 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:33:03 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:33:07 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:33:11 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:33:20 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:33:34 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:34:03 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:34:58 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:36:00 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:36:55 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:36:59 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:37:03 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:37:06 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:37:09 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:37:13 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:37:18 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:37:26 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:37:40 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:38:12 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:39:05 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:40:07 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:41:09 [emerg] 1#1: unknown log format "custom_log" in /etc/nginx/conf.d/default.conf:13
+2024/09/24 15:42:39 [notice] 1#1: using the "epoll" event method
+2024/09/24 15:42:39 [notice] 1#1: nginx/1.27.1
+2024/09/24 15:42:39 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14) 
+2024/09/24 15:42:39 [notice] 1#1: OS: Linux 5.15.153.1-microsoft-standard-WSL2
+2024/09/24 15:42:39 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2024/09/24 15:42:39 [notice] 1#1: start worker processes
+2024/09/24 15:42:39 [notice] 1#1: start worker process 28
+2024/09/24 15:42:39 [notice] 1#1: start worker process 29
+2024/09/24 15:42:39 [notice] 1#1: start worker process 30
+2024/09/24 15:42:39 [notice] 1#1: start worker process 31
+2024/09/24 15:51:01 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2024/09/24 15:51:01 [notice] 28#28: gracefully shutting down
+2024/09/24 15:51:01 [notice] 29#29: gracefully shutting down
+2024/09/24 15:51:01 [notice] 31#31: gracefully shutting down
+2024/09/24 15:51:01 [notice] 30#30: gracefully shutting down
+2024/09/24 15:51:01 [notice] 28#28: exiting
+2024/09/24 15:51:01 [notice] 29#29: exiting
+2024/09/24 15:51:01 [notice] 29#29: exit
+2024/09/24 15:51:01 [notice] 31#31: exiting
+2024/09/24 15:51:01 [notice] 30#30: exiting
+2024/09/24 15:51:01 [notice] 28#28: exit
+2024/09/24 15:51:01 [notice] 31#31: exit
+2024/09/24 15:51:01 [notice] 30#30: exit
+2024/09/24 15:51:02 [notice] 1#1: signal 17 (SIGCHLD) received from 30
+2024/09/24 15:51:02 [notice] 1#1: worker process 28 exited with code 0
+2024/09/24 15:51:02 [notice] 1#1: worker process 30 exited with code 0
+2024/09/24 15:51:02 [notice] 1#1: signal 29 (SIGIO) received
+2024/09/24 15:51:02 [notice] 1#1: signal 17 (SIGCHLD) received from 28
+2024/09/24 15:51:02 [notice] 1#1: signal 17 (SIGCHLD) received from 29
+2024/09/24 15:51:02 [notice] 1#1: worker process 29 exited with code 0
+2024/09/24 15:51:02 [notice] 1#1: worker process 31 exited with code 0
+2024/09/24 15:51:02 [notice] 1#1: exit
