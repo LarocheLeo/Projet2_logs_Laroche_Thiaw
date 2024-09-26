@@ -1,10 +1,10 @@
-version: '3'
+version: '3'                   #pourquoi docker-compose ? pour lancer le conteneur avec une commande
 services:
   nginx:
     build: .
     image: generation_log
     ports:
-      - "8080:80"
+      - "8080:80"              # mappage du port 80 au 8080 permet d'éviter les conflits de ports
     volumes:
       - ./logs:/var/log/nginx  # Monter le répertoire de logs sur la machine hôte
     restart: always            # Redémarrer automatiquement en cas de crash

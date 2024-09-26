@@ -8,7 +8,10 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 COPY index.html /usr/share/nginx/html/index.html
 
 # Expose le port 80
-EXPOSE 80
+# mappage dans docker-compose.yml
+EXPOSE 80 
 
 # Lance Nginx
+# -g permet de passer des directives de configuration à Nginx en ligne de commande
+# deamon off permet de lancer Nginx au premier plan, utile vu qu'on utilise un conteneur avec un service
 CMD ["nginx", "-g", "daemon off;"]
