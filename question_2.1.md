@@ -15,8 +15,24 @@ Concernant le prix, gratuit en version open-source, mais Elastic propose des fon
 
 ### Graylog
 
+GrayLog permet de centraliser les logs issus de plusieurs environnements grâce à son support de différents protocoles comme Syslog et GELF. L'interface est simple à utiliser et facile à prendre en main, ce qui le rend plus accessible que l'Elastic Stack. Il dispose également d'une communauté active pour aider les nouveaux utilisateurs. L'installation est plus facile que celle d'Elastic Stack.
+
+La version open-source est gratuite, mais des forfaits payants existent pour les entreprises, avec des fonctionnalités avancées comme le clustering, la gestion d’alertes et le support prioritaire. Les prix varient selon la taille de l’infrastructure et les besoins spécifiques.
+
+
+
 ### Fluentd
+
+Fluentd est un collecteur de logs très flexible qui permet de centraliser des données provenant de plusieurs sources et de les envoyer vers différents systèmes. Il est relativement facile à installer et à configurer pour des scénarios de base. Cependant, pour des configurations avancées, il peut être nécessaire d’avoir des connaissances plus approfondies. Fluentd ne propose pas de dashboard intégré, donc il doit être utilisé avec des outils comme Grafana ou Elasticsearch pour la visualisation.
+
+Fluentd est entièrement gratuit et open-source, sans versions premium ni frais supplémentaires. Il est soutenu par une grande communauté, offrant une solution économique mais robuste pour les entreprises.
+
 ### Filebeat
+
+Filebeat, faisant partie de l’Elastic Stack, collecte et envoie les logs vers Logstash ou Elasticsearch. Il est léger et simple à configurer pour des cas d’utilisation de base, mais des configurations avancées peuvent devenir plus difficiles à mettre en œuvre. Comme Fluentd, il n’a pas de dashboard intégré et doit être utilisé avec Kibana ou un autre outil de visualisation.
+
+Filebeat est gratuit en version open-source, mais s’inscrit dans l’écosystème Elastic qui propose des versions payantes pour des fonctionnalités supplémentaires telles que le monitoring avancé ou des intégrations spécifiques.
+
 ### Promtail
 ### New Relic
 ### Splunk
