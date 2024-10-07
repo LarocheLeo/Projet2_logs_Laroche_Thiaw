@@ -77,6 +77,41 @@ Pour cette présentation, on va présenter par chapitre nos codes. En premier no
 
 #### Promtail 
 
+Rappel de ce qu'est promtail : 
+    Promtail est un agent utilisé pour collecter et envoyer des logs à Loki, un système de gestion de logs développé par Grafana. Il fait partie de la suite d'outils d'observabilité Grafana et est souvent utilisé avec Loki pour une solution complète de journalisation.
+
+```
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+```
+On va configurer le serveur avec les arguments suivants : 
+
+     http_listen_port: 9080 :
+
+Ce paramètre configure Promtail pour écouter les requêtes HTTP sur le port 9080. Cela permet de surveiller Promtail lui-même via des interfaces HTTP pour des besoins tels que la santé (health checks) ou les métriques.
+Le choix de 9080 est assez courant pour un service de monitoring qui utilise HTTP (8080, 9090, ou 9080 sont souvent utilisés dans ce contexte).
+
+
+```
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: nginx-logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx
+          __path__: /var/log/nginx/*.log  # Chemin vers vos logs Nginx
+```
+
 
 
 
