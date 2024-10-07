@@ -7,7 +7,7 @@
 
 ## Programme 
 
-Pour la création de nos conteneurs, on à décider de générer deux dockerfile pour que sa soit plus simple pour nous. Le premier sera celui qui généra les logs et le second c'est celui qui va les récuperer puis nous les afficher. 
+Pour la création de nos conteneurs, on à décider de générer un dockerfile qui servira à la création du conteneur générateur de logs et un docker-compose pour la collectre de logs. Nous avions décider ainsi pour deux raison: la premère, c'était tout simplement la demande du cahier des charges mais ensuite la seconde raison est qu'en cours de route, nous avions eu l'information qu'on pouvrait utilisé docker-compose, donc pour la simplicité, on va l'utiliser pour la seconde partie qui est bien plus complex que le docker-compose.    
 
 ### Génération des logs 
 
@@ -63,23 +63,21 @@ CMD ["nginx", "-g", "daemon off;"]
 Pour finir afin que tout fonctionne, nous envoyont tout sur le port 80. On va utiliser une commande nginx avec l'arguement -g permet de passer des directives de configuration à Nginx en ligne de commande et deamon off permet de lancer Nginx au premier plan, utile vu qu'on utilise un conteneur avec un seul service.
 t 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### Collecte de logs
+
+Maintenant que nous avions terminer avec notre génération de logs, on va regarder comment nous avions configurer notre docker-compose et nos différents fichier qui l'accompagnge. Pour commencer, notre solution est composé de 3 fichier : 
+    - Le docker-compose 
+    - Et 2 fichier config en yaml 
+
+Mais avant aussi d'aller plus loin. Qu'elle est notre solution ? 
+Notre solution est "simple", on va utilise 3 logiciels. Graphana qui va nous permettre d'afficher nos différentes informations. Graphana loki qui va pouvoir transmettre les informations qu'on récupère avec promtail pour l'envoyer à Graphana Et donc on utilisera promtail comme dit précédement pour que loki puisse lire les données envoyer car loki ne pouvait pas faire sa directement après nos recherches. 
+
+Pour cette présentation, on va présenter par chapitre nos codes. En premier nos fichiers config avec promtail puis loki, enfin nous allions terminer notre présentation avec le docker-compose.
+
+
+#### Promtail 
+
+
+
+
+
