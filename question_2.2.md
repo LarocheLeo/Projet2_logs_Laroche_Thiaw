@@ -86,22 +86,35 @@ server:
   grpc_listen_port: 0
 
 ```
+
 On va configurer le serveur avec les arguments suivants : 
-
-     http_listen_port: 9080 :
-
-Ce paramètre configure Promtail pour écouter les requêtes HTTP sur le port 9080. Cela permet de surveiller Promtail lui-même via des interfaces HTTP pour des besoins tels que la santé (health checks) ou les métriques.
-Le choix de 9080 est assez courant pour un service de monitoring qui utilise HTTP (8080, 9090, ou 9080 sont souvent utilisés dans ce contexte).
-
+    http_listen_port: 9080 :
+Ce paramètre configure Promtail pour écouter les requêtes HTTP sur le port 9080. Cela permet de surveiller Promtail lui-même via des interfaces HTTP pour des besoins tels que la santé (health checks) ou les métriques. Ce choix de port est assez courant pour un service de monitoring qui utilise HTTP comme celui-ci (8080, 9090, ou 9080 sont souvent utilisés dans ce contexte).  
+    grpc_listen_port: 0 :
+Le port GRPC est désactivé (0 signifie que le service ne sera pas lancé sur un port). GRPC peut être utilisé pour des communications internes dans des systèmes distribués, mais ici, il n'est pas nécessaire puisque Promtail envoie les logs à Loki via HTTP. Le choix de ne pas utiliser GRPC est logique vu que notre architecture n'utilise que HTTP pour la communication avec Loki.
 
 ```
 
 positions:
   filename: /tmp/positions.yaml
+```
 
+Position dans la configuration de Promtail sert à garder une trace de l'avancement de la lecture des fichiers de log.
+    filename: /tmp/positions.yaml :
+Promtail suit les fichiers de logs et doit savoir où il s'est arrêté dans le fichier pour reprendre l'envoi des logs en cas de redémarrage ou d'incident. Cette section définit où Promtail va stocker cette information. Le fichier /tmp/positions.yaml est utilisé pour enregistrer les positions des logs déjà traités. Chaque fois que Promtail envoie une nouvelle entrée de log, il met à jour ce fichier avec la position dans le fichier de log, évitant ainsi l'envoi de doublons. On à choisie de mettre /tmp/, cela signifie que ces informations ne sont pas persistées à long terme (elles disparaissent lors d’un redémarrage), ce qui peut être suffisant pour un environnement comme le notre.
+
+
+```
 clients:
   - url: http://loki:3100/loki/api/v1/push
 
+```
+La section clients liste les destinations où les logs doivent être envoyés. 
+    url: http://loki:3100/loki/api/v1/push : 
+Cela indique à Promtail où envoyer les logs une fois collectés. Dans notre cas, ils sont envoyés à notre serveur Loki situé à l'URL http://loki:3100 via l'API /loki/api/v1/push. Le choix de loki:3100 est typique dans un environnement Docker où loki est le nom du service Loki dans le réseau Docker et 3100 est le port par défaut utilisé par Loki pour recevoir des données.
+De plus l'URL correspond à l'API Loki utilisée pour pousser les logs dans son backend.
+
+```
 scrape_configs:
   - job_name: nginx-logs
     static_configs:
@@ -111,6 +124,16 @@ scrape_configs:
           job: nginx
           __path__: /var/log/nginx/*.log  # Chemin vers vos logs Nginx
 ```
+La section scrape_configs dans la configuration de Promtail détermine les sources de logs que Promtail va collecter et envoyer à Loki. C'est une section essentielle qui définit les jobs de collecte de logs ainsi que les chemins spécifiques des fichiers de logs sur le système local.
+    - job_name: nginx-logs :
+Cette section définit un "job" de scraping de logs, ici nommé nginx-logs. Chaque job_name peut correspondre à un ensemble de sources de logs que Promtail doit surveiller.
+    static_configs : 
+    Cela permet de définir des configurations statiques, c’est-à-dire des sources de logs dont les chemins ne changent pas. On utilise cette configuration pour les fichiers de logs situés sur le disque, comme dans le cas des logs Nginx ici.
+    targets : Permet de cibles ce qu'on veut surveiller.
+        - localhost : Cela spécifie que Promtail va surveiller les logs sur la machine locale.
+    labels : Les labels sont des métadonnées associées aux logs pour mieux les catégoriser dans Loki.
+job: nginx : Est un label job est ajouté aux logs pour identifier qu'ils proviennent du job nginx. Ce label sera utilisé par Loki et Grafana pour filtrer et requêter les logs. C’est un label très utile pour regrouper les logs d’un même service.
+    path: /var/log/nginx/*.log : path est un chemin vers les fichiers de logs que Promtail doit surveiller. Ici, il est configuré pour suivre tous les fichiers logs se trouvant dans /var/log/nginx/ (via le masque *.log qui capture tous les fichiers se terminant par .log).
 
 
 
