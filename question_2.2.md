@@ -75,7 +75,7 @@ Notre solution est "simple", on va utilise 3 logiciels. Graphana qui va nous per
 Pour cette présentation, on va présenter par chapitre nos codes. En premier nos fichiers config avec promtail puis loki, enfin nous allions terminer notre présentation avec le docker-compose.
 
 
-#### Promtail 
+### Promtail 
 
 Rappel de ce qu'est promtail : 
     Promtail est un agent utilisé pour collecter et envoyer des logs à Loki, un système de gestion de logs développé par Grafana. Il fait partie de la suite d'outils d'observabilité Grafana et est souvent utilisé avec Loki pour une solution complète de journalisation.
@@ -141,7 +141,7 @@ Cela permet de définir des configurations statiques, c’est-à-dire des source
 - - - path: /var/log/nginx/*.log : path est un chemin vers les fichiers de logs que Promtail doit surveiller. Ici, il est configuré pour suivre tous les fichiers logs se trouvant dans /var/log/nginx/ (via le masque *.log qui capture tous les fichiers se terminant par .log).
 
 
-#### Loki
+### Loki
 
 Rappel de ce qu'est loki : 
    Loki est un système de gestion des logs open-source développé par Grafana Labs, conçu pour être une alternative légère et scalable à d'autres solutions comme ELK (Elasticsearch, Logstash, Kibana). Il est optimisé pour gérer les logs de manière efficace tout en minimisant les ressources nécessaires.
@@ -215,11 +215,6 @@ schema_config: Cette section définit la configuration du schéma utilisé par L
 - - - prefix: index_ : Les index des logs stockés auront pour préfixe "index_", ce qui permet de les identifier facilement.
 - - - period: 24h : Un nouvel index est créé tous les 24 heures.
 
-
-
-
-
-
 ```
 storage_config:
   boltdb_shipper:
@@ -268,4 +263,13 @@ table_manager:
 table_manager: table_manager dans la configuration de Loki est responsable de la gestion des tables d'index utilisées pour organiser et accéder aux logs stockés. Les tables d'index aident Loki à retrouver efficacement les logs sans avoir à parcourir tous les fichiers de logs bruts. Le table_manager régule le cycle de vie des tables, notamment en ce qui concerne la rétention et la suppression des données selon les politiques définies.
 - retention_deletes_enabled: false : Désactive la suppression des anciens chunks basée sur une politique de rétention.
 - retention_period: 0s : Le délai de rétention des logs est défini à 0s, ce qui signifie qu'aucune rétention (suppression automatique des anciens logs) n'est activée.
+
+
+### Docker-compose : 
+
+Maintenant que nous avions vu nos configuration, nous pouvions aller découvrir ce que nous avions configurer avec Docker-compose. Afin d'avoir un maximun de facilité et autre, une grande partie des créations d'image et de conteneur se trouve de dans. 
+
+
+
+
 
