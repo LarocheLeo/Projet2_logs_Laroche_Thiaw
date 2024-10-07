@@ -99,8 +99,8 @@ positions:
   filename: /tmp/positions.yaml
 ```
 
-Position dans la configuration de Promtail sert à garder une trace de l'avancement de la lecture des fichiers de log.
-- filename: /tmp/positions.yaml :
+Postion : Position dans la configuration de Promtail sert à garder une trace de l'avancement de la lecture des fichiers de log.
+ - filename: /tmp/positions.yaml :
 Promtail suit les fichiers de logs et doit savoir où il s'est arrêté dans le fichier pour reprendre l'envoi des logs en cas de redémarrage ou d'incident. Cette section définit où Promtail va stocker cette information. Le fichier /tmp/positions.yaml est utilisé pour enregistrer les positions des logs déjà traités. Chaque fois que Promtail envoie une nouvelle entrée de log, il met à jour ce fichier avec la position dans le fichier de log, évitant ainsi l'envoi de doublons. On à choisie de mettre /tmp/, cela signifie que ces informations ne sont pas persistées à long terme (elles disparaissent lors d’un redémarrage), ce qui peut être suffisant pour un environnement comme le notre.
 
 
@@ -109,7 +109,7 @@ clients:
   - url: http://loki:3100/loki/api/v1/push
 
 ```
-La section clients liste les destinations où les logs doivent être envoyés. 
+clients : La section clients liste les destinations où les logs doivent être envoyés. 
 - url: http://loki:3100/loki/api/v1/push : 
 Cela indique à Promtail où envoyer les logs une fois collectés. Dans notre cas, ils sont envoyés à notre serveur Loki situé à l'URL http://loki:3100 via l'API /loki/api/v1/push. Le choix de loki:3100 est typique dans un environnement Docker où loki est le nom du service Loki dans le réseau Docker et 3100 est le port par défaut utilisé par Loki pour recevoir des données.
 De plus l'URL correspond à l'API Loki utilisée pour pousser les logs dans son backend.
@@ -124,7 +124,7 @@ scrape_configs:
           job: nginx
           __path__: /var/log/nginx/*.log  # Chemin vers vos logs Nginx
 ```
-La section scrape_configs dans la configuration de Promtail détermine les sources de logs que Promtail va collecter et envoyer à Loki. C'est une section essentielle qui définit les jobs de collecte de logs ainsi que les chemins spécifiques des fichiers de logs sur le système local.
+scrape_configs: La section scrape_configs dans la configuration de Promtail détermine les sources de logs que Promtail va collecter et envoyer à Loki. C'est une section essentielle qui définit les jobs de collecte de logs ainsi que les chemins spécifiques des fichiers de logs sur le système local.
 
 - job_name: nginx-logs :
 Cette section définit un "job" de scraping de logs, ici nommé nginx-logs. Chaque job_name peut correspondre à un ensemble de sources de logs que Promtail doit surveiller.
@@ -132,15 +132,140 @@ Cette section définit un "job" de scraping de logs, ici nommé nginx-logs. Chaq
 - static_configs :
 Cela permet de définir des configurations statiques, c’est-à-dire des sources de logs dont les chemins ne changent pas. On utilise cette configuration pour les fichiers de logs situés sur le disque, comme dans le cas des logs Nginx ici.
 
-- targets : Permet de cibles ce qu'on veut surveiller.
-- localhost : Cela spécifie que Promtail va surveiller les logs sur la machine locale.
+- - targets : Permet de cibles ce qu'on veut surveiller.
+- - - localhost : Cela spécifie que Promtail va surveiller les logs sur la machine locale.
 
-- labels : Les labels sont des métadonnées associées aux logs pour mieux les catégoriser dans Loki.
-- job: nginx : Est un label job est ajouté aux logs pour identifier qu'ils proviennent du job nginx. Ce label sera utilisé par Loki et Grafana pour filtrer et requêter les logs. C’est un label très utile pour regrouper les logs d’un même service.
+- - labels : Les labels sont des métadonnées associées aux logs pour mieux les catégoriser dans Loki.
+- - - job: nginx : Est un label job est ajouté aux logs pour identifier qu'ils proviennent du job nginx. Ce label sera utilisé par Loki et Grafana pour filtrer et requêter les logs. C’est un label très utile pour regrouper les logs d’un même service.
   
-- path: /var/log/nginx/*.log : path est un chemin vers les fichiers de logs que Promtail doit surveiller. Ici, il est configuré pour suivre tous les fichiers logs se trouvant dans /var/log/nginx/ (via le masque *.log qui capture tous les fichiers se terminant par .log).
+- - - path: /var/log/nginx/*.log : path est un chemin vers les fichiers de logs que Promtail doit surveiller. Ici, il est configuré pour suivre tous les fichiers logs se trouvant dans /var/log/nginx/ (via le masque *.log qui capture tous les fichiers se terminant par .log).
+
+
+#### Loki
+
+Rappel de ce qu'est loki : 
+   Loki est un système de gestion des logs open-source développé par Grafana Labs, conçu pour être une alternative légère et scalable à d'autres solutions comme ELK (Elasticsearch, Logstash, Kibana). Il est optimisé pour gérer les logs de manière efficace tout en minimisant les ressources nécessaires.
+
+```
+auth_enabled: false
+```
+auth_enabled: false
+    Cette directive désactive l'authentification pour l'accès à l'API de Loki. Pourquoi ce choix, tout simplement cela signifie que toutes les requêtes HTTP vers Loki n'auront pas besoin d'authentification, ce qui est utile dans des environnements locaux come notre cas, mais peut représenter un risque en production. Si Loki est exposé à un réseau public, l'authentification devrait être activée pour sécuriser l'accès.
+
+```
+server:
+  http_listen_port: 3100
+```
+Configuration serveur : 
+- Configuration du serveur HTTP de Loki pour qu'il écoute sur le port 3100. Le port 3100 est le port par défaut pour Loki. Il est généralement ouvert pour permettre aux clients comme Promtail ou Grafana de se connecter et d'envoyer ou lire des logs via des API REST.
+```
+ingester:
+  wal:
+    enabled: true
+    dir: /loki/wal
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+  chunk_idle_period: 3m
+  max_chunk_age: 1h
+  chunk_retain_period: 30s
+  max_transfer_retries: 0
+```
+
+ingester:Cette section configure l'ingestion des logs, c’est-à-dire la manière dont Loki reçoit, traite, et stocke les logs en tant que chunks.
+
+- wal : Activation du Write Ahead Log (WAL), qui est une méthode de journalisation pour assurer la durabilité des données. Loki écrit d'abord les données dans un fichier WAL avant de les traiter.
+- - dir : le répertoire où ces fichiers WAL sont stockés est /loki/wal.
+- lifecycler : le lifecycler est un composant qui gère la coordination et la disponibilité des ingesters
+- - ring: Le ring est une structure de données distribuée utilisée pour suivre et coordonner les ingesters dans un cluster Loki.
+- - - kvstore : Le Key-Value Store (magasin clé-valeur) est l'endroit où l'état du ring est stocké. Il contient des informations cruciales comme les adresses IP des ingesters, leurs responsabilités (portions de données qu'ils gèrent) et leurs statuts (actif, en panne, etc.).
+- - - - store: inmemory : Stocke cette information en mémoire (utile pour des configurations simples ou tests).
+- - - replication_factor: 1 : Aucun mécanisme de réplication n'est utilisé (valeur à 1), donc les données ne sont pas redondantes.
+- chunk_idle_period: 3m : Si aucun nouveau log n'arrive dans un chunk pendant 3 minutes, ce chunk sera fermé et prêt à être stocké.
+- max_chunk_age: 1h : Un chunk ne peut pas dépasser 1 heure d'âge. Après cette durée, il sera forcé à être fermé, même s'il continue de recevoir des logs.
+- chunk_retain_period: 30s : Après qu'un chunk est marqué comme prêt à être déplacé vers le stockage permanent, il est conservé pendant 30 secondes avant d'être supprimé de la mémoire.
+- max_transfer_retries: 0 : Limite à 0 le nombre de tentatives de réessayer de transférer des données entre ingesters en cas d'échec. Cela peut indiquer une configuration simple où l'on ne prévoit pas de récupération automatique.
+
+```
+schema_config:
+  configs:
+    - from: 2023-01-01
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
+```
+schema_config: Cette section définit la configuration du schéma utilisé par Loki pour stocker et indexer les logs.
+
+- configs :  Dans Loki, la section configs au sein de schema_config permet de définir la structure et le comportement du schéma d'indexation des logs sur une période de temps spécifique.
+- - from: 2023-01-01 : Ce schéma est en vigueur à partir du 1er janvier 2023.
+
+- - store: boltdb-shipper : Utilise BoltDB Shipper pour gérer les index. Cela permet une meilleure gestion des index en les déplaçant vers un stockage partagé.
+
+- - object_store: filesystem : Les objets (chunks de logs) sont stockés sur le système de fichiers local. Cela signifie que Loki ne s'appuie pas sur un service d'objets distants comme S3 ou GCS.
+
+- - schema: v11 : Utilise la version 11 du schéma, qui est une version optimisée pour des performances accrues.
+
+- - index : la section index fait référence à la manière dont les logs sont indexés, c'est-à-dire comment les données sont organisées pour faciliter la recherche rapide.
+
+- - - prefix: index_ : Les index des logs stockés auront pour préfixe "index_", ce qui permet de les identifier facilement.
+- - - period: 24h : Un nouvel index est créé tous les 24 heures.
 
 
 
 
+
+
+```
+storage_config:
+  boltdb_shipper:
+    active_index_directory: /loki/index
+    cache_location: /loki/cache
+    shared_store: filesystem
+  filesystem:
+    directory: /loki/chunks
+```
+storage_config: Cette section configure le stockage des logs et des index.
+
+- boltdb_shipper : boltdb_shipper est un composant crucial pour le stockage des index de logs lorsque Loki est configuré pour être distribué. Il permet de gérer l'indexation des logs de manière locale tout en assurant la synchronisation avec un stockage centralisé pour les déploiements distribués.
+
+- - active_index_directory: /loki/index : Le répertoire où sont stockés les index actifs sur le disque local.
+- - cache_location: /loki/cache : Emplacement du cache pour améliorer les performances de lecture des index.
+- - shared_store: filesystem : Le stockage partagé est ici le système de fichiers local.
+
+- filesystem : filesystem est une option de configuration pour le stockage des logs et des index dans un système de fichiers local. Il est souvent utilisé dans des environnements où Loki fonctionne sur une seule machine ou dans des systèmes distribués qui partagent un système de fichiers réseau.
+
+- - directory: /loki/chunks : Répertoire sur le système de fichiers où les chunks de logs (données) sont stockés. Loki divise les logs en chunks pour faciliter le stockage et la recherche.
+
+```
+limits_config:
+  enforce_metric_name: false
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+```
+limits_config : limits_config dans la configuration de Loki permet de définir des limites et des restrictions sur l'utilisation des ressources et le comportement de certaines fonctionnalités. Elle est cruciale pour gérer la performance de Loki dans des environnements à grande échelle, en évitant des surcharges de requêtes ou des utilisations excessives des ressources.
+
+- enforce_metric_name: false : Désactive l'exigence d'avoir un nom de métrique spécifique pour chaque log (par défaut à false pour les logs).
+
+- reject_old_samples: true : Active le rejet des échantillons de logs trop anciens.
+
+- reject_old_samples_max_age: 168h : Définit l'âge maximum des logs à 168 heures (7 jours). Tout log ayant un timestamp plus vieux que 7 jours sera rejeté.
+```
+chunk_store_config:
+  max_look_back_period: 0s
+```
+chunk_store_config: chunk_store_config dans la configuration de Loki définit les paramètres liés à la gestion des "chunks", c'est-à-dire des segments de données compressés utilisés pour stocker les logs de manière plus efficace. Les chunks sont des blocs de logs regroupés par périodes de temps ou par d'autres critères, et leur gestion a un impact direct sur les performances de Loki, en particulier lors de la recherche et de la récupération des logs.
+- max_look_back_period: 0s : Indique que l'on peut remonter dans l'historique sans limite lors de la consultation des chunks. C'est configuré à 0s pour indiquer qu'il n'y a pas de restriction.
+```
+table_manager:
+  retention_deletes_enabled: false
+  retention_period: 0s
+```
+table_manager: table_manager dans la configuration de Loki est responsable de la gestion des tables d'index utilisées pour organiser et accéder aux logs stockés. Les tables d'index aident Loki à retrouver efficacement les logs sans avoir à parcourir tous les fichiers de logs bruts. Le table_manager régule le cycle de vie des tables, notamment en ce qui concerne la rétention et la suppression des données selon les politiques définies.
+- retention_deletes_enabled: false : Désactive la suppression des anciens chunks basée sur une politique de rétention.
+- retention_period: 0s : Le délai de rétention des logs est défini à 0s, ce qui signifie qu'aucune rétention (suppression automatique des anciens logs) n'est activée.
 
