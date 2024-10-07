@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  loki:
+    image: grafana/loki:2.9.2
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - my_network  # Connecte Loki au réseau personnalisé
+
+  promtail:
+    image: grafana/promtail:2.9.2
+    volumes:
+      - ./promtail-config.yaml:/etc/promtail/config.yml
+      - /var/log/nginx/:/var/log/nginx
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - my_network  # Connecte Promtail au réseau personnalisé
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - my_network  # Connecte Grafana au réseau personnalisé
+
+  nginx:  # Nouveau service pour Nginx
+    build: D:/Cours_3e_annee/SAE/projet2/version_final  # Remplace par le chemin vers ton Dockerfile Nginx
+    ports:
+      - "80:80"  # Mappe le port 80 du conteneur au port 80 de l'hôte
+    volumes:
+      - /var/log/nginx/:/var/log/nginx  # Monte le volume pour les logs Nginx
+    networks:
+      - my_network  # Connecte Nginx au réseau personnalisé
+
+volumes:
+  loki-data:
+  grafana-data:
+
+networks:
+  my_network:  # Déclaration du réseau personnalisé
