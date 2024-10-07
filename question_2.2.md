@@ -126,6 +126,7 @@ scrape_configs:
 ```
 La section scrape_configs dans la configuration de Promtail détermine les sources de logs que Promtail va collecter et envoyer à Loki. C'est une section essentielle qui définit les jobs de collecte de logs ainsi que les chemins spécifiques des fichiers de logs sur le système local.
     - job_name: nginx-logs :
+    
 Cette section définit un "job" de scraping de logs, ici nommé nginx-logs. Chaque job_name peut correspondre à un ensemble de sources de logs que Promtail doit surveiller.
     static_configs : 
     Cela permet de définir des configurations statiques, c’est-à-dire des sources de logs dont les chemins ne changent pas. On utilise cette configuration pour les fichiers de logs situés sur le disque, comme dans le cas des logs Nginx ici.
