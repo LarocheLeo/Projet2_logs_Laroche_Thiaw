@@ -5,6 +5,7 @@
 - Loki : https://grafana.com/docs/loki/latest/configure/
 - Promtail : https://grafana.com/docs/loki/latest/send-data/promtail/configuration/
 - Graphana : https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/
+- Nginx : https://nginx.org/en/docs/
 - Plus vidéo youtube 
 
 ## Codage des différents conteneurs  
