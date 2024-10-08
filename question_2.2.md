@@ -1,17 +1,12 @@
 # LarocheLeo-SAE52_Collecte_traitement_des_logs
 
-
-## Source utiliser pour la programmation : 
-
-- Stack overflow, deamon off : https://stackoverflow.com/questions/25970711/what-is-the-difference-between-nginx-daemon-on-off-option
-
 ## Programme 
 
-Pour la création de nos conteneurs, on à décider de générer un dockerfile qui servira à la création du conteneur générateur de logs et un docker-compose pour la collectre de logs. Nous avions décider ainsi pour deux raison: la premère, c'était tout simplement la demande du cahier des charges mais ensuite la seconde raison est qu'en cours de route, nous avions eu l'information qu'on pouvrait utilisé docker-compose, donc pour la simplicité, on va l'utiliser pour la seconde partie qui est bien plus complex que le docker-compose.    
+Pour la création de nos conteneurs, on a décidé de générer un dockerfile qui servira à la création du conteneur générateur de logs et un docker-compose pour la collecte de logs. Nous avions décidé ainsi pour deux raisons : la première, c'était tout simplement la demande du cahier des charges, mais ensuite, la seconde raison est qu'en cours de route, nous avions eu l'information qu'on pouvrait utiliser docker-compose, donc, pour la simplicité, on va l'utiliser pour la seconde partie qui est bien plus complexe que le docker-compose.
 
 ### Génération des logs 
 
-Pour générer nos logs, on va créer une simple page web avec Nginx. De plus dans les dockerfiles suivant, on va rassembler tout les informations en un seul fichier même si ce n'est pas conseiller. on préfera avoir tout au même endroit.
+Pour générer nos logs, on va créer une simple page Web avec Nginx. De plus, dans les dockerfiles suivants, on va rassembler toutes les informations en un seul fichier, même si ce n'est pas conseillé. On préfera avoir tout au même endroit.
 
 ```
 # Utilise l'image officielle Nginx
@@ -20,7 +15,7 @@ FROM nginx:latest
 # Crée un répertoire pour les logs (ce répertoire sera monté comme un volume)
 RUN mkdir -p /var/log/nginx
 ```
-Dans un premier temps, nous définition qu'elle image on va utiliser et où on pourra retrouver les logs 
+Dans un premier temps, nous déterminerons quelle image on va utiliser et où on pourra retrouver les logs.
 ```
 # Copie la configuration Nginx avec un logging dans le dossier créé
 RUN echo 'server { \
@@ -35,7 +30,7 @@ RUN echo 'server { \
     error_log /var/log/nginx/error.log; \
 }' > /etc/nginx/conf.d/default.conf
 ```
-après avoir définit certaines choses, on va maitenant faire la configuration du serveur Nginx qui va faire fonctionner notre page web, de plus on rajoute la création des fichiers où on va retrouver les fichiers logs mais aussi la rédirection de toute la configuration dans le chemin et le fichier qu'on souhaite.
+Après avoir défini certaines choses, on va maintenant faire la configuration du serveur Nginx qui va faire fonctionner notre page web. De plus, on rajoute la création des fichiers où on va retrouver les fichiers logs, mais aussi la rédirection de toute la configuration dans le chemin et le fichier qu'on souhaite.
 ```
 # Crée une page HTML simple
 RUN echo '<!DOCTYPE html>\
@@ -52,7 +47,7 @@ RUN echo '<!DOCTYPE html>\
 </body>\
 </html>' > /usr/share/nginx/html/index.html
 ```
-Maintenant que nous avions notre server nginx, on va créer notre page web qui va permettre de créer nos logs, c'est une page web staatic donc assez simple à créer. puid on fait comme plus eu, on fait la rédériction de ce qu'on fait dans un simple fichier.
+Maintenant que nous avions notre serveur Nginx, on va créer notre page web qui va permettre de créer nos logs. C'est une page web staatic, donc assez simple à créer. Puis on fait comme plus haut, on fait la rédéfinition de ce qu'on fait dans un simple fichier.
 ```
 # Expose le port 80
 EXPOSE 80
@@ -60,25 +55,23 @@ EXPOSE 80
 # Lance Nginx
 CMD ["nginx", "-g", "daemon off;"]
 ```
-Pour finir afin que tout fonctionne, nous envoyont tout sur le port 80. On va utiliser une commande nginx avec l'arguement -g permet de passer des directives de configuration à Nginx en ligne de commande et deamon off permet de lancer Nginx au premier plan, utile vu qu'on utilise un conteneur avec un seul service.
-t 
+Pour finir, afin que tout fonctionne, nous envoyons tout sur le port 80. On va utiliser une commande Nginx avec l'argument -g permet de passer des directives de configuration à Nginx en ligne de commande et deamon off permet de lancer Nginx au premier plan, utile vu qu'on utilise un conteneur avec un seul service.
 
 ### Collecte de logs
 
-Maintenant que nous avions terminer avec notre génération de logs, on va regarder comment nous avions configurer notre docker-compose et nos différents fichier qui l'accompagnge. Pour commencer, notre solution est composé de 3 fichier : 
-    - Le docker-compose 
-    - Et 2 fichier config en yaml 
+Maintenant que nous avions terminé avec notre génération de logs, on va regarder comment nous avions configuré notre docker-compose et nos différents fichiers qui l'accompagnent. Pour commencer, notre solution est composé de 3 fichier : 
 
-Mais avant aussi d'aller plus loin. Qu'elle est notre solution ? 
-Notre solution est "simple", on va utilise 3 logiciels. Graphana qui va nous permettre d'afficher nos différentes informations. Graphana loki qui va pouvoir transmettre les informations qu'on récupère avec promtail pour l'envoyer à Graphana Et donc on utilisera promtail comme dit précédement pour que loki puisse lire les données envoyer car loki ne pouvait pas faire sa directement après nos recherches. 
+– Le docker-compose 
+– Et 2 fichiers config en yaml.
 
-Pour cette présentation, on va présenter par chapitre nos codes. En premier nos fichiers config avec promtail puis loki, enfin nous allions terminer notre présentation avec le docker-compose.
+Mais avant aussi d'aller plus loin. Qu'elle est notre solution ? Notre solution est « simple », on va utiliser 3 logiciels. Graphana qui va nous permettre d'afficher nos différentes informations. Graphana Loki qui va pouvoir transmettre les informations qu'on récupère avec Promtail pour les envoyer à Graphana. Et donc, on utilisera Promtail comme dit précédemment pour que Loki puisse lire les données envoyées, car Loki ne pouvait pas faire cela directement après nos recherches. 
 
+Pour cette présentation, on va présenter par chapitre nos codes. En premier, nos fichiers config avec Promtail puis Loki, enfin, nous allions terminer notre présentation avec le docker-compose.
 
 ### Promtail 
 
-Rappel de ce qu'est promtail : 
-    Promtail est un agent utilisé pour collecter et envoyer des logs à Loki, un système de gestion de logs développé par Grafana. Il fait partie de la suite d'outils d'observabilité Grafana et est souvent utilisé avec Loki pour une solution complète de journalisation.
+Rappel de ce qu'est Promtail : 
+Promtail est un agent utilisé pour collecter et envoyer des logs à Loki, un système de gestion de logs développé par Grafana. Il fait partie de la suite d'outils d'observabilité Grafana et est souvent utilisé avec Loki pour une solution complète de journalisation.
 
 ```
 server:
@@ -101,7 +94,7 @@ positions:
 
 Postion : Position dans la configuration de Promtail sert à garder une trace de l'avancement de la lecture des fichiers de log.
  - filename: /tmp/positions.yaml :
-Promtail suit les fichiers de logs et doit savoir où il s'est arrêté dans le fichier pour reprendre l'envoi des logs en cas de redémarrage ou d'incident. Cette section définit où Promtail va stocker cette information. Le fichier /tmp/positions.yaml est utilisé pour enregistrer les positions des logs déjà traités. Chaque fois que Promtail envoie une nouvelle entrée de log, il met à jour ce fichier avec la position dans le fichier de log, évitant ainsi l'envoi de doublons. On à choisie de mettre /tmp/, cela signifie que ces informations ne sont pas persistées à long terme (elles disparaissent lors d’un redémarrage), ce qui peut être suffisant pour un environnement comme le notre.
+Promtail suit les fichiers de logs et doit savoir où il s'est arrêté dans le fichier pour reprendre l'envoi des logs en cas de redémarrage ou d'incident. Cette section définit où Promtail va stocker cette information. Le fichier /tmp/positions.yaml est utilisé pour enregistrer les positions des logs déjà traités. Chaque fois que Promtail envoie une nouvelle entrée de log, il met à jour ce fichier avec la position dans le fichier de log, évitant ainsi l'envoi de doublons. On à choisi de mettre /tmp/, cela signifie que ces informations ne sont pas persistées à long terme (elles disparaissent lors d’un redémarrage), ce qui peut être suffisant pour un environnement comme le notre.
 
 
 ```
@@ -136,7 +129,7 @@ Cela permet de définir des configurations statiques, c’est-à-dire des source
 - - - localhost : Cela spécifie que Promtail va surveiller les logs sur la machine locale.
 
 - - labels : Les labels sont des métadonnées associées aux logs pour mieux les catégoriser dans Loki.
-- - - job: nginx : Est un label job est ajouté aux logs pour identifier qu'ils proviennent du job nginx. Ce label sera utilisé par Loki et Grafana pour filtrer et requêter les logs. C’est un label très utile pour regrouper les logs d’un même service.
+- - - job: nginx : Est un label job ajouté aux logs pour identifier qu'ils proviennent du job nginx. Ce label sera utilisé par Loki et Grafana pour filtrer et requêter les logs. C’est un label très utile pour regrouper les logs d’un même service.
   
 - - - path: /var/log/nginx/*.log : path est un chemin vers les fichiers de logs que Promtail doit surveiller. Ici, il est configuré pour suivre tous les fichiers logs se trouvant dans /var/log/nginx/ (via le masque *.log qui capture tous les fichiers se terminant par .log).
 
@@ -267,8 +260,7 @@ table_manager: table_manager dans la configuration de Loki est responsable de la
 
 ### Docker-compose : 
 
-Maintenant que nous avions vu nos configuration, nous pouvions aller découvrir ce que nous avions configurer avec Docker-compose. Afin d'avoir un maximun de facilité et autre, une grande partie des créations d'image et de conteneur se trouve de dans. 
-
+Maintenant que nous avions vu nos configurations, nous pouvions aller découvrir ce que nous avions configuré avec Docker-compose. Afin d'avoir un maximun de facilité et autres, une grande partie des créations d'image et de conteneur se trouve dans. 
 ```
 version: '3'
 ```
@@ -352,16 +344,16 @@ networks:
   my_network:   
 ```
 networks : La section networks dans un fichier Docker Compose définit les réseaux que les conteneurs utiliseront pour communiquer entre eux.
-- my_network: déclaration du réseaux pour que les conteneurs communiques entres eux. 
+- my_network: déclaration du réseau pour que les conteneurs communiquent entre eux. 
 
 ### Remarque de fin : 
 
-Après avoir réaliser ce projet, nous avions bien-sur quelque idée d'améliorartion de ce qu'on pourrai faire en plus. C'est "amélioration" sont surtout des fonctionnaliter qu'on à pas pu mettre par manque de temps. Ces idées était de mettre plus d'information sur le système hote comme : les ressources CPU utiliser, les packets envoyer ou autre information. 
+Après avoir réalisé ce projet, nous avions bien-sûr quelques idées d'amélioration de ce qu'on pourrait faire en plus. Ces « améliorations » sont surtout des fonctionnalités qu'on n'a pas pu mettre par manque de temps. Ces idées étaient de mettre plus d'information sur le système host comme les ressources CPU utilisées, les paquets envoyés ou autre information. 
 
-Même, si nous avions choisi au final graphana pour la "simplicité" d'utilisation. Nous pensions qu'ils serait plutôt intérresant d'utilisé autre que graphana pour récupperer les logs, sa nous aurai permis de découvrir des applications et comment les utiliser mais avec le temps contre nous à préférer d'utiliser une solution "viable" et "facile" à mettre emplace.  
+Même si nous avions choisi au final Graphana pour la « simplicité » d'utilisation. Nous pensions qu'il serait plutôt intéressant d'utiliser autre que Graphana pour récupérer les logs, cela nous aurait permis de découvrir des applications et comment les utiliser, mais avec le temps contre nous, nous avons préféré d'utiliser une solution viable et facile à mettre en place.
 
-Nous vous remerçions, avoir lu ce markdown jusqu'au bout.
-Et nous excusion pour les possibles fautes restantes. 
+Nous vous remercions d'avoir lu ce markdown jusqu'au bout.
+Et nous excusions pour les possibles fautes restantes. 
 
 
 
