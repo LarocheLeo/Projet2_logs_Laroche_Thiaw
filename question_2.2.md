@@ -277,7 +277,7 @@ services:
 ```
 services : La section services: dans un fichier Docker Compose est utilisée pour définir et configurer plusieurs services (ou conteneurs Docker) qui vont tourner ensemble dans un même environnement orchestré. Chaque service représente un conteneur Docker indépendant qui peut être configuré, connecté aux autres services, et exposé avec des ports et volumes.
 - Loki : création du contener loki pour pouvoir l'utiliser.
-- - Image : Utilise la version 2.9.2 de l'image officielle de Loki, qui est un agrégateur de logs conçu pour être efficace et léger par rapport à des solutions comme ELK.
+- - Image : Utilisation la version 2.9.2 de l'image officielle de Loki, qui est un agrégateur de logs conçu pour être efficace et léger par rapport à des solutions comme ELK.
 - - Ports : Mappe le port 3100 du conteneur au port 3100 de l'hôte. C'est le port par défaut pour accéder à Loki via HTTP.
 - - Command : Spécifie l'emplacement du fichier de configuration personnalisé de Loki, ici /etc/loki/local-config.yaml.
 - - Networks : Le conteneur Loki est connecté à un réseau personnalisé appelé my_network, ce qui permet à tous les services de communiquer entre eux à l'intérieur du même réseau isolé.
@@ -292,7 +292,7 @@ services : La section services: dans un fichier Docker Compose est utilisée pou
       - my_network
 ```
 - promtail : création du contener promtail pour pouvoir l'utiliser.
-- - Image : Utilise la version 2.9.2 de Promtail, qui est l'agent qui collecte les logs à partir de fichiers (comme ceux de Nginx), les étiquette, et les envoie à Loki.
+- - Image : Utilisation la version 2.9.2 de Promtail, qui est l'agent qui collecte les logs à partir de fichiers (comme ceux de Nginx), les étiquette, et les envoie à Loki.
 - - Volumes :
 - - - ./promtail-config.yaml:/etc/promtail/config.yml : Le fichier de configuration promtail-config.yaml est monté à l'intérieur du conteneur pour indiquer à Promtail où chercher les logs et comment les traiter.
 - - - /var/log/nginx/:/var/log/nginx : Le répertoire /var/log/nginx/ est monté pour que Promtail puisse accéder aux logs générés par Nginx et les envoyer à Loki.
@@ -311,7 +311,7 @@ services : La section services: dans un fichier Docker Compose est utilisée pou
       - my_network  # Connecte Grafana au réseau personnalisé
 ```
 - grafana : création du contener grafana pour pouvoir l'utiliser.
-- - Image : Utilise l'image la plus récente de Grafana, un outil de visualisation des données. Grafana permet de visualiser les logs envoyés à Loki via des tableaux de bord.
+- - Image : Utilisation l'image la plus récente de Grafana, un outil de visualisation des données. Grafana permet de visualiser les logs envoyés à Loki via des tableaux de bord.
 - - Ports : Le port 3000 est mappé de l'intérieur du conteneur vers l'hôte, permettant d'accéder à l'interface de Grafana via localhost:3000.
 - - Volumes : Le volume grafana-data est utilisé pour stocker les données persistantes de Grafana (paramètres, tableaux de bord, etc.).
 - - Environment : Définit le mot de passe administrateur initial avec la variable GF_SECURITY_ADMIN_PASSWORD. Ici, le mot de passe est admin (par défaut).
