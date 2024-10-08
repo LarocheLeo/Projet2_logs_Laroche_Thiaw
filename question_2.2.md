@@ -60,7 +60,6 @@ Pour finir, afin que tout fonctionne, nous envoyons tout sur le port 80. On va u
 ### Collecte de logs
 
 Maintenant que nous avions terminé avec notre génération de logs, on va regarder comment nous avions configuré notre docker-compose et nos différents fichiers qui l'accompagnent. Pour commencer, notre solution est composé de 3 fichier : 
-
 – Le docker-compose.
 – Et 2 fichiers config en yaml.
 
