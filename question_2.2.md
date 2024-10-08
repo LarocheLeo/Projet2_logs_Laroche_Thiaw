@@ -351,8 +351,6 @@ networks : La section networks dans un fichier Docker Compose définit les rése
 
 Après avoir réalisé ce projet, nous avions bien-sûr quelques idées d'amélioration de ce qu'on pourrait faire en plus. Ces « améliorations » sont surtout des fonctionnalités qu'on n'a pas pu mettre par manque de temps. Ces idées étaient de mettre plus d'information sur le système host comme les ressources CPU utilisées, les paquets envoyés ou autre information. 
 
-Même si nous avions choisi au final Graphana pour la « simplicité » d'utilisation. Nous pensions qu'il serait plutôt intéressant d'utiliser autre que Graphana pour récupérer les logs, cela nous aurait permis de découvrir des applications et comment les utiliser, mais avec le temps contre nous, nous avons préféré d'utiliser une solution viable et facile à mettre en place.
-
 Nous vous remercions d'avoir lu ce markdown jusqu'au bout.
 Et nous excusions pour les possibles fautes restantes. 
 
