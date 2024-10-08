@@ -70,7 +70,7 @@ Maintenant que nous avions terminer avec notre génération de logs, on va regar
     - Et 2 fichier config en yaml 
 
 Mais avant aussi d'aller plus loin. Qu'elle est notre solution ? 
-Notre solution est "simple", on va utilise 3 logiciels. Graphana qui va nous permettre d'afficher nos différentes informations. Graphana loki qui va pouvoir transmettre les informations qu'on récupère avec promtail pour l'envoyer à Graphana Et donc on utilisera promtail comme dit précédement pour que loki puisse lire les données envoyer car loki ne pouvait pas faire sa directement après nos recherches. 
+Notre solution est "simple", on va utiliser 3 logiciels. Graphana qui va nous permettre d'afficher nos différentes informations. Graphana loki qui va pouvoir transmettre les informations qu'on récupère avec promtail pour l'envoyer à Graphana Et donc on utilisera promtail comme dit précédement pour que loki puisse lire les données envoyer car loki ne pouvait pas faire sa directement après nos recherches. 
 
 Pour cette présentation, on va présenter par chapitre nos codes. En premier nos fichiers config avec promtail puis loki, enfin nous allions terminer notre présentation avec le docker-compose.
 
@@ -132,7 +132,7 @@ Cette section définit un "job" de scraping de logs, ici nommé nginx-logs. Chaq
 - static_configs :
 Cela permet de définir des configurations statiques, c’est-à-dire des sources de logs dont les chemins ne changent pas. On utilise cette configuration pour les fichiers de logs situés sur le disque, comme dans le cas des logs Nginx ici.
 
-- targets : Permet de cibles ce qu'on veut surveiller.
+- targets : Permet de cibler ce qu'on veut surveiller.
 - localhost : Cela spécifie que Promtail va surveiller les logs sur la machine locale.
 
 - labels : Les labels sont des métadonnées associées aux logs pour mieux les catégoriser dans Loki.
@@ -142,5 +142,63 @@ Cela permet de définir des configurations statiques, c’est-à-dire des source
 
 
 
+### Grafana Loki
+
+Rappel de ce qu'est Loki :
+  Loki est un système de gestion de logs développé par Grafana. Il est souvent utilisé avec Promtail pour collecter, stocker, et visualiser des logs de manière efficace et scalable, tout en s'inspirant du modèle de stockage des séries temporelles de Prometheus.
+
+auth_enabled: false
+
+Ce paramètre désactive l’authentification dans Loki. Cela signifie que n’importe quel client peut accéder à Loki sans avoir à s’authentifier. Dans des environnements de production, cela peut être dangereux, et il est conseillé de configurer une forme d'authentification. Dans ton cas, si tu es dans un environnement sécurisé, cela peut suffire.
 
 
+'''
+server:
+  http_listen_port: 3100
+'''
+
+Loki écoute sur le port 3100 pour les requêtes HTTP. C’est le port par défaut utilisé pour l'API Loki, où Promtail (ou d'autres clients) enverra les logs. Ce paramètre est essentiel pour que Loki soit accessible aux agents collecteurs comme Promtail.
+
+
+'''
+
+ingester:
+  wal:
+    enabled: true
+    dir: /loki/wal
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+  chunk_idle_period: 3m
+  max_chunk_age: 1h
+  chunk_retain_period: 30s
+  max_transfer_retries: 0
+
+'''
+
+L'ingester est responsable de recevoir les logs et de les transformer en blocs de données compressés avant de les stocker
+
+'''
+limits_config:
+  enforce_metric_name: false
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+
+'''
+
+Cette section gère les limites sur les données que Loki acceptera. Rejette les logs trop anciens pour éviter d'ingérer des données obsolètes.La limite maximale pour accepter des logs vieux de 168 heures (soit 7 jours).
+
+## Conclusion
+
+ce projet illustre une approche intégrée pour la génération et la collecte de logs en utilisant des technologies modernes telles que Docker, Nginx, Promtail et Grafana Loki. En optant pour Nginx comme générateur de logs, nous avons pu mettre en place un serveur web simple capable de produire des données utiles pour le suivi et l'analyse. La configuration des logs d'accès et d'erreurs permet une meilleure compréhension du comportement du serveur et des utilisateurs.
+
+L'intégration de Promtail et Grafana Loki offre une solution robuste pour la collecte et la visualisation des logs. Promtail joue un rôle crucial en collectant les logs générés par Nginx et en les transmettant à Loki, qui les stocke de manière organisée et accessible. Ce flux de données permet une analyse efficace des logs, facilitant ainsi le diagnostic des problèmes et l'optimisation des performances du serveur.
+
+En utilisant Docker et Docker Compose, nous avons simplifié le déploiement et la gestion des différents services, ce qui améliore la portabilité et la reproductibilité de notre environnement. Ce projet constitue une base solide pour des systèmes de journalisation plus complexes et peut être étendu pour intégrer d'autres services ou technologies au fur et à mesure que les besoins évoluent. En fin de compte, cette solution favorise une meilleure visibilité sur les opérations d'application, essentielle pour toute infrastructure moderne.
+ce projet illustre une approche intégrée pour la génération et la collecte de logs en utilisant des technologies modernes telles que Docker, Nginx, Promtail et Grafana Loki. En optant pour Nginx comme générateur de logs, nous avons pu mettre en place un serveur web simple capable de produire des données utiles pour le suivi et l'analyse. La configuration des logs d'accès et d'erreurs permet une meilleure compréhension du comportement du serveur et des utilisateurs.
+
+L'intégration de Promtail et Grafana Loki offre une solution robuste pour la collecte et la visualisation des logs. Promtail joue un rôle crucial en collectant les logs générés par Nginx et en les transmettant à Loki, qui les stocke de manière organisée et accessible. Ce flux de données permet une analyse efficace des logs, facilitant ainsi le diagnostic des problèmes et l'optimisation des performances du serveur.
+
+En utilisant Docker et Docker Compose, nous avons simplifié le déploiement et la gestion des différents services, ce qui améliore la portabilité et la reproductibilité de notre environnement. Ce projet constitue une base solide pour des systèmes de journalisation plus complexes et peut être étendu pour intégrer d'autres services ou technologies au fur et à mesure que les besoins évoluent. En fin de compte, cette solution favorise une meilleure visibilité sur les opérations d'application, essentielle pour toute infrastructure moderne.

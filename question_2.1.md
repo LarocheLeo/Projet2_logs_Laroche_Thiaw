@@ -9,7 +9,7 @@ Ce document fera le tours des differents outils de collecte de données que nous
 
 ### Elastic Stack
 
-Dispose des outils Logstack/Beats pour la collecte et l'envoi de données. Dispose également d'Elasticsearch comme moteur de recherche, ce qui facilise sont utilisation. Très populaire dans le domaine, Elastic Stack est muni d'une grande communauté prête à accompgner les nouveux utilisateurs. Ceci dit, l'installation est assez compliqué à mettre en place
+Dispose des outils Logstack/Beats pour la collecte et l'envoi de données. Dispose également d'Elasticsearch comme moteur de recherche, ce qui facilise sont utilisation. Très populaire dans le domaine, Elastic Stack est muni d'une grande communauté prête à accompgner les nouveux utilisateurs. Ceci dit, l'installation est assez compliqué à mettre en place Cette solution semble adaptée aux projets plus complexes qui demandent beacoups de personalisation C'est pourquoi nous n'allons pas opter pour cette solution.
 
 Concernant le prix, gratuit en version open-source, mais Elastic propose des fonctionnalités premium comme la sécurité avancée, les alertes et les fonctionnalités cloud.
 
@@ -47,11 +47,6 @@ Splunk est l’une des solutions les plus puissantes pour la gestion des logs, c
 
 Splunk est une solution payante avec une tarification basée sur le volume de données ingérées. Les forfaits varient selon les fonctionnalités et les besoins de l'entreprise, allant de la gestion de base des logs jusqu’à des options avancées pour l'analyse des données et la sécurité.
 
-### Graphana
-
-Grafana, lorsqu’il est utilisé avec Loki, offre une solution complète pour la centralisation et la visualisation des logs. L’avantage de cette combinaison est la capacité de Grafana à afficher non seulement les logs, mais aussi d'autres métriques dans des dashboards très personnalisés. Facile à installer, cette solution est particulièrement populaire auprès des entreprises qui cherchent une approche unifiée pour surveiller à la fois les métriques et les logs.
-
-Bien que Grafana et Loki soient gratuits et open-source, les offres de Grafana Cloud permettent aux entreprises de bénéficier d’un hébergement géré avec des options de mise à l’échelle, le tout basé sur des tarifs compétitifs en fonction du volume de logs et des utilisateurs
 
 ### Promtail
 
@@ -65,6 +60,12 @@ La version open-source de Loki et Promtail est gratuite, mais Grafana propose de
 SolarWinds est une solution tout-en-un qui se distingue par sa capacité à surveiller des environnements complexes. Elle permet de centraliser les logs tout en offrant des fonctionnalités de monitoring d’infrastructure. Les dashboards permettent de visualiser les performances en temps réel, ce qui en fait un outil précieux pour les administrateurs système. Cependant, l’installation peut s’avérer difficile dans des environnements de grande taille.
 
 Les solutions SolarWinds sont payantes, avec des forfaits basés sur le nombre de nœuds et les fonctionnalités choisies. Ces forfaits incluent souvent des options de support technique, ainsi que des services avancés de surveillance des infrastructures et d'analyse des logs.
+
+
+## Notre choix
+
+Nous avons choisi Promtail car cette solution est simple à installer, adaptée à notre contexte en plus de fournir une interface graphique et une documentation complète, claire et précise. 
+
 
 ## Source utilisées : 
 
