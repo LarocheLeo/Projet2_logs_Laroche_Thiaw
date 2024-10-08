@@ -67,6 +67,12 @@ Les solutions SolarWinds sont payantes, avec des forfaits basés sur le nombre d
 Nous avons choisi Promtail car cette solution est simple à installer, adaptée à notre contexte en plus de fournir une interface graphique et une documentation complète, claire et précise. 
 
 
+
+## Notre choix
+
+Nous avons choisi Promtail car cette solution est simple à installer, adaptée à notre contexte en plus de fournir une interface graphique et une documentation complète, claire et précise. 
+
+
 ## Source utilisées : 
 
 - https://www.syloe.com/collecte-et-traitement-des-logs/
