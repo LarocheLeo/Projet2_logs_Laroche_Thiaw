@@ -269,6 +269,101 @@ table_manager: table_manager dans la configuration de Loki est responsable de la
 
 Maintenant que nous avions vu nos configuration, nous pouvions aller découvrir ce que nous avions configurer avec Docker-compose. Afin d'avoir un maximun de facilité et autre, une grande partie des créations d'image et de conteneur se trouve de dans. 
 
+```
+version: '3'
+```
+Version 3 du format Docker Compose. Cette version est largement utilisée et offre un bon équilibre entre simplicité et fonctionnalités pour définir des services conteneurisés.
+```
+services:
+  loki:
+    image: grafana/loki:2.9.2
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - my_network
+```
+services : La section services: dans un fichier Docker Compose est utilisée pour définir et configurer plusieurs services (ou conteneurs Docker) qui vont tourner ensemble dans un même environnement orchestré. Chaque service représente un conteneur Docker indépendant qui peut être configuré, connecté aux autres services, et exposé avec des ports et volumes.
+- Loki : création du contener loki pour pouvoir l'utiliser.
+- - Image : Utilise la version 2.9.2 de l'image officielle de Loki, qui est un agrégateur de logs conçu pour être efficace et léger par rapport à des solutions comme ELK.
+- - Ports : Mappe le port 3100 du conteneur au port 3100 de l'hôte. C'est le port par défaut pour accéder à Loki via HTTP.
+- - Command : Spécifie l'emplacement du fichier de configuration personnalisé de Loki, ici /etc/loki/local-config.yaml.
+- - Networks : Le conteneur Loki est connecté à un réseau personnalisé appelé my_network, ce qui permet à tous les services de communiquer entre eux à l'intérieur du même réseau isolé.
+```
+  promtail:
+    image: grafana/promtail:2.9.2
+    volumes:
+      - ./promtail-config.yaml:/etc/promtail/config.yml
+      - /var/log/nginx/:/var/log/nginx
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - my_network
+```
+- promtail : création du contener promtail pour pouvoir l'utiliser.
+- - Image : Utilise la version 2.9.2 de Promtail, qui est l'agent qui collecte les logs à partir de fichiers (comme ceux de Nginx), les étiquette, et les envoie à Loki.
+- - Volumes :
+- - - ./promtail-config.yaml:/etc/promtail/config.yml : Le fichier de configuration promtail-config.yaml est monté à l'intérieur du conteneur pour indiquer à Promtail où chercher les logs et comment les traiter.
+- - - /var/log/nginx/:/var/log/nginx : Le répertoire /var/log/nginx/ est monté pour que Promtail puisse accéder aux logs générés par Nginx et les envoyer à Loki.
+- - Command : Indique à Promtail d'utiliser le fichier de configuration monté.
+- - Networks : Connecté au même réseau personnalisé my_network que Loki et les autres services, permettant une communication sans problème avec Loki via son URL interne.
+```
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - my_network  # Connecte Grafana au réseau personnalisé
+```
+- grafana : création du contener grafana pour pouvoir l'utiliser.
+- - Image : Utilise l'image la plus récente de Grafana, un outil de visualisation des données. Grafana permet de visualiser les logs envoyés à Loki via des tableaux de bord.
+- - Ports : Le port 3000 est mappé de l'intérieur du conteneur vers l'hôte, permettant d'accéder à l'interface de Grafana via localhost:3000.
+- - Volumes : Le volume grafana-data est utilisé pour stocker les données persistantes de Grafana (paramètres, tableaux de bord, etc.).
+- - Environment : Définit le mot de passe administrateur initial avec la variable GF_SECURITY_ADMIN_PASSWORD. Ici, le mot de passe est admin (par défaut).
+- - Networks : Connecté à my_network, permettant à Grafana de communiquer avec Loki et Promtail directement via le réseau Docker.
+```
+  nginx:  # Nouveau service pour Nginx
+    build: D:/Cours_3e_annee/SAE/projet2/version_final  # Remplace par le chemin vers ton Dockerfile Nginx
+    ports:
+      - "80:80"  # Mappe le port 80 du conteneur au port 80 de l'hôte
+    volumes:
+      - /var/log/nginx/:/var/log/nginx  # Monte le volume pour les logs Nginx
+    networks:
+      - my_network  # Connecte Nginx au réseau personnalisé
+```
+- nginx : création du contener nginx pour pouvoir l'utiliser.
+- - Build : Indique que Nginx sera construit à partir d'un Dockerfile situé dans le répertoire spécifié (dans cet exemple, un chemin local sur ton système).
+- - Ports : Le port 80 est exposé, permettant à Nginx de répondre aux requêtes HTTP via localhost:80.
+- - Volumes : Monte le répertoire des logs Nginx (/var/log/nginx/) à la fois sur l'hôte et dans le conteneur, permettant à Promtail de lire les logs générés par Nginx.
+- - Networks : Connecté à my_network pour que Nginx puisse interagir avec d'autres services sur le réseau, comme Promtail pour le transfert des logs.
+```
+volumes:
+  loki-data:
+  grafana-data:
+```
+volumes: La section volumes dans un fichier Docker Compose est utilisée pour définir des volumes qui sont des zones de stockage persistant pour les données générées ou utilisées par les conteneurs. 
+- loki-data 
+- grafana-data : Ces volumes permettent de persister les données des services Loki et Grafana. Cela signifie que les données de logs (pour Loki) et les tableaux de bord/configurations (pour Grafana) ne seront pas perdus si les conteneurs sont arrêtés ou redémarrés.
+```
+networks:
+  my_network:   
+```
+networks : La section networks dans un fichier Docker Compose définit les réseaux que les conteneurs utiliseront pour communiquer entre eux.
+- my_network: déclaration du réseaux pour que les conteneurs communiques entres eux. 
+
+### Remarque de fin : 
+
+Après avoir réaliser ce projet, nous avions bien-sur quelque idée d'améliorartion de ce qu'on pourrai faire en plus. C'est "amélioration" sont surtout des fonctionnaliter qu'on à pas pu mettre par manque de temps. Ces idées était de mettre plus d'information sur le système hote comme : les ressources CPU utiliser, les packets envoyer ou autre information. 
+
+Même, si nous avions choisi au final graphana pour la "simplicité" d'utilisation. Nous pensions qu'ils serait plutôt intérresant d'utilisé autre que graphana pour récupperer les logs, sa nous aurai permis de découvrir des applications et comment les utiliser mais avec le temps contre nous à préférer d'utiliser une solution "viable" et "facile" à mettre emplace.  
+
+Nous vous remerçions, avoir lu ce markdown jusqu'au bout.
+Et nous excusion pour les possibles fautes restantes. 
+
+
 
 
 
