@@ -1,5 +1,12 @@
 # Projet 2 : Gestion des logs 
 
+## Source utiliser : 
+
+- Loki : https://grafana.com/docs/loki/latest/configure/
+- Promtail : https://grafana.com/docs/loki/latest/send-data/promtail/configuration/
+- Graphana : https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/
+- Plus vidéo youtube 
+
 ## Codage des différents conteneurs  
 
 Pour la création de nos conteneurs, on a décidé de générer un dockerfile qui servira à la création du conteneur générateur de logs et un docker-compose pour la collecte de logs. Nous avions décidé ainsi pour deux raisons : la première, c'était tout simplement la demande du cahier des charges, mais ensuite, la seconde raison est qu'en cours de route, nous avions eu l'information qu'on pouvrait utiliser docker-compose, donc, pour la simplicité, on va l'utiliser pour la seconde partie qui est bien plus complexe que le docker-compose.
