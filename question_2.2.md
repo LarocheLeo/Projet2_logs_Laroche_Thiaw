@@ -90,7 +90,7 @@ server:
 ```
 
 On va configurer le serveur avec les arguments suivants : 
-- http_listen_port: 9080 :
+- **http_listen_port: 9080 :**
 Ce paramètre configure Promtail pour écouter les requêtes HTTP sur le port 9080. Cela permet de surveiller Promtail lui-même via des interfaces HTTP pour des besoins tels que la santé (health checks) ou les métriques. Ce choix de port est assez courant pour un service de monitoring qui utilise HTTP comme celui-ci (8080, 9090, ou 9080 sont souvent utilisés dans ce contexte).  
 - grpc_listen_port: 0 :
 Le port GRPC est désactivé (0 signifie que le service ne sera pas lancé sur un port). GRPC peut être utilisé pour des communications internes dans des systèmes distribués, mais ici, il n'est pas nécessaire puisque Promtail envoie les logs à Loki via HTTP. Le choix de ne pas utiliser GRPC est logique vu que notre architecture n'utilise que HTTP pour la communication avec Loki.
