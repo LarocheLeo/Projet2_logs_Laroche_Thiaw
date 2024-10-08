@@ -61,7 +61,7 @@ Pour finir, afin que tout fonctionne, nous envoyons tout sur le port 80. On va u
 
 Maintenant que nous avions terminé avec notre génération de logs, on va regarder comment nous avions configuré notre docker-compose et nos différents fichiers qui l'accompagnent. Pour commencer, notre solution est composé de 3 fichier : 
 
-– Le docker-compose 
+– Le docker-compose.
 – Et 2 fichiers config en yaml.
 
 Mais avant aussi d'aller plus loin. Qu'elle est notre solution ? Notre solution est « simple », on va utiliser 3 logiciels. Graphana qui va nous permettre d'afficher nos différentes informations. Graphana Loki qui va pouvoir transmettre les informations qu'on récupère avec Promtail pour les envoyer à Graphana. Et donc, on utilisera Promtail comme dit précédemment pour que Loki puisse lire les données envoyées, car Loki ne pouvait pas faire cela directement après nos recherches. 
