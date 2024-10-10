@@ -64,7 +64,9 @@ Les solutions SolarWinds sont payantes, avec des forfaits basés sur le nombre d
 
 ## Notre choix
 
-Nous avons choisi Promtail car cette solution est simple à installer, adaptée à notre contexte en plus de fournir une interface graphique et une documentation complète, claire et précise. 
+Nous avons opté pour Promtail comme solution de collecte de logs pour plusieurs raisons. Tout d'abord, son installation est simple et rapide, surtout si notre infrastructure utilise déjà Grafana, ce qui permet une intégration fluide avec notre environnement existant. Promtail, en conjonction avec Loki, offre une gestion efficace des logs, avec la possibilité de visualiser les données directement dans Grafana à travers des tableaux de bord personnalisables. Cela répond parfaitement à notre besoin de centraliser et de visualiser les logs sans avoir à configurer des outils supplémentaires complexes.
+
+De plus, Promtail se distingue par sa légèreté et sa simplicité, ce qui le rend idéal pour notre projet. Il nous permet de surveiller nos logs en temps réel, tout en minimisant l'impact sur les ressources de notre système. La solution open-source est gratuite, ce qui représente un avantage économique, d’autant plus qu'elle est soutenue par une communauté active et une documentation complète et bien structurée. Nous avons particulièrement apprécié la clarté des instructions et la précision des informations fournies, ce qui a facilité la mise en œuvre dans notre environnement.
 
 
 ## Source utilisées : 
