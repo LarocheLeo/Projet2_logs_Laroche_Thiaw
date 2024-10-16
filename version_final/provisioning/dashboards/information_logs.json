@@ -1,0 +1,57 @@
+{
+    "id": null,
+    "uid": "cLV5GDCkz",
+    "title": "Information et logs",
+    "tags": [],
+    "timezone": "browser",
+    "editable": true,
+    "graphTooltip": 1,
+    "panels": [
+      {
+        "type": "logs",
+        "title": "Logs Nginx",
+        "gridPos": {
+          "h": 9,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "datasource": "Loki",
+        "targets": [
+          {
+            "expr": "{job=\"nginx\"}",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "showLabels": true,
+          "wrapLogMessage": true,
+          "sortOrder": "Descending"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {}
+          },
+          "overrides": []
+        }
+      }
+    ],
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": ["5s", "10s", "30s", "1m", "5m"]
+    },
+    "templating": {
+      "list": []
+    },
+    "annotations": {
+      "list": []
+    },
+    "refresh": "5s",
+    "schemaVersion": 17,
+    "version": 1,
+    "links": []
+  }
+  

@@ -7,7 +7,7 @@ services:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
     networks:
-      - my_network  # Connecte Loki au réseau personnalisé
+      - my_network
 
   promtail:
     image: grafana/promtail:2.9.2
@@ -16,7 +16,7 @@ services:
       - /var/log/nginx/:/var/log/nginx
     command: -config.file=/etc/promtail/config.yml
     networks:
-      - my_network  # Connecte Promtail au réseau personnalisé
+      - my_network
 
   grafana:
     image: grafana/grafana:latest
@@ -24,23 +24,28 @@ services:
       - "3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./provisioning/dashboards:/etc/grafana/provisioning/dashboards  # Modifier le chemin pour éviter des conflits
+      - ./provisioning/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./provisioning/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
     networks:
-      - my_network  # Connecte Grafana au réseau personnalisé
+      - my_network
 
-  nginx:  # Nouveau service pour Nginx
-    build: D:/Cours_3e_annee/SAE/projet2/version_final  # Remplace par le chemin vers ton Dockerfile Nginx
+  nginx:
+    build: D:/Cours_3e_annee/SAE/projet2/version_final
     ports:
-      - "80:80"  # Mappe le port 80 du conteneur au port 80 de l'hôte
+      - "80:80"
     volumes:
-      - /var/log/nginx/:/var/log/nginx  # Monte le volume pour les logs Nginx
+      - /var/log/nginx/:/var/log/nginx
     networks:
-      - my_network  # Connecte Nginx au réseau personnalisé
+      - my_network
 
 volumes:
   loki-data:
   grafana-data:
 
 networks:
-  my_network:  # Déclaration du réseau personnalisé
+  my_network:
