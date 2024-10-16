@@ -716,10 +716,9 @@ networks : La section networks dans un fichier Docker Compose définit les rése
 
 ### Remarque de fin : 
 
-Après avoir réalisé ce projet, nous avions bien-sûr quelques idées d'amélioration de ce qu'on pourrait faire en plus. Ces « améliorations » sont surtout des fonctionnalités qu'on n'a pas pu mettre par manque de temps. Ces idées étaient de mettre plus d'information sur le système host comme les ressources CPU utilisées, les paquets envoyés ou autre information. 
+Après avoir réalisé ce projet, nous avions bien sûr quelques idées d'amélioration de ce qu'on pourrait faire en plus. Ces « améliorations » sont surtout des fonctionnalités qu'on n'a pas pu mettre par manque de temps. Ces idées étaient de mettre plus d'information sur le système host, comme les ressources CPU utilisées, les paquets envoyés ou autre information. 
 
-Mais comme vous le voyait pendant les heures en plus donner nous avions rajouter ces fonctionnalitées. Même si, on avait vulue  en plus mettre le stockage utiliser sur le disque dur. Nous avions pas réussi à le faire correctement. Donc nous l'avions simplement retirer cette options.
+Mais comme vous le voyez pendant les heures en plus données, nous avions rajouter ces fonctionnalités. Même si on avait voulu en plus mettre le stockage utilisé sur le disque dur. Nous n’avions pas réussi à le faire correctement. Donc nous l'avions simplement retiré cette option.
 
-Nous vous remercions d'avoir lu ce markdown jusqu'au bout.
-
+Nous vous remercions d'avoir lu ce Markdown jusqu'au bout.
 
