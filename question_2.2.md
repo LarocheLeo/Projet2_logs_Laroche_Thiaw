@@ -380,6 +380,219 @@ providers: : Cette section définit les "fournisseurs" de dashboards, c'est-à-d
 
 ### Information_logs
 
+Maintenant qu'on a réaliser l'automatisation des datasources et la création du dashboard, on va créer le code qui va créer le dashboard où va afficher tout nos informations.
+Donc ce fichier JSON représentera un dashboard Grafana du nom d'"Information et logs", avec plusieurs panneaux de visualisation pour suivre l'état du système. Voici la description de ce fochier :
+```
+{
+  "id": null,
+  "uid": "cLV5GDCkz",
+  "title": "Information et logs",
+  "tags": [],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+
+```
+1 Les Informations générales : 
+
+- id : null (sera généré automatiquement lorsque le dashboard sera créé).
+- uid : cLV5GDCkz (identifiant unique du dashboard utilisé dans l'URL).
+- title : "Information et logs" (le titre du dashboard).
+- tags : Liste vide, il n'y a pas de tags associés à ce dashboard.
+- timezone : "browser" (le fuseau horaire est défini selon le navigateur de l'utilisateur).
+- editable : true (le dashboard est modifiable).
+- graphTooltip : 1 (affichage d'un tooltip lorsqu'on survole un graphique).
+```
+
+  "panels": [
+```
+2 Panneaux (Panels)
+Le dashboard contient 3 panneaux, chacun ayant des objectifs spécifiques.
+```
+    {
+      "type": "logs",
+      "title": "Logs Nginx",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": "Loki",
+      "targets": [
+        {
+          "expr": "{job=\"nginx\"}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showLabels": true,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      }
+    },
+```
+Panneau 1 : Logs Nginx
+- type : "logs" (type de panneau pour afficher des logs).
+- title : "Logs Nginx" (titre du panneau).
+- gridPos : Position du panneau sur la grille (hauteur de 9, largeur de 24, position x=0, y=0).
+- datasource : "Loki" (source de données Loki utilisée pour récupérer les logs).
+- targets :
+  - expr : "{job=\"nginx\"}" (expression de recherche pour les logs du job "nginx").
+  - refId : "A" (identifiant de la requête).
+- options :
+  - showLabels: true (affiche les étiquettes des logs).
+  - wrapLogMessage: true (ajoute un retour à la ligne dans le message de log si nécessaire).
+  - sortOrder: "Descending" (les logs seront triés par ordre décroissant).
+- fieldConfig : Cette section définit la configuration spécifique des champs de données dans le panneau. Elle permet de personnaliser l'affichage des valeurs et des unités dans les graphiques ou autres types de panneaux. 
+- defaults : Cette sous-section permet de définir les valeurs par défaut de la configuration des champs.
+- custom: {} : indique qu'il n'y a aucune configuration personnalisée par défaut. Si des personnalisations étaient nécessaires, elles seraient ajoutées dans ce bloc sous forme d'options spécifiques, mais ici ce champ est vide, ce qui signifie qu'aucune personnalisation n'est appliquée par défaut.
+- overrides : Cette sous-section permet de définir des personnalisations spécifiques pour certains champs particuliers, en fonction de leurs caractéristiques ou de leurs valeurs.
+Ici, la liste est vide ([]), ce qui signifie qu'il n'y a pas d'overrides (modifications spécifiques pour des champs particuliers) appliquées. 
+  - 
+```
+    {
+      "type": "graph",
+      "title": "Utilisation de la RAM",
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 0.75 },
+              { "color": "red", "value": 0.9 }
+            ]
+          }
+        }
+      }
+    },
+```
+Panneau 2 : Utilisation de la RAM
+- type : "graph" (type de panneau graphique).
+- title : "Utilisation de la RAM" (titre du panneau).
+- gridPos : Position du panneau (hauteur de 9, largeur de 12, position x=0, y=9).
+- datasource : "Prometheus" (source de données Prometheus pour les métriques système).
+- targets :
+  - expr : "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes" (expression Prometheus pour calculer l'utilisation de la RAM en fonction de la mémoire totale et disponible).
+  - refId : "A" (identifiant de la requête).
+- fieldConfig : Cette section définit la configuration spécifique des champs de données dans le panneau. Elle permet de personnaliser l'affichage des valeurs et des unités dans les graphiques ou autres types de panneaux. 
+- defaults : Cette sous-section permet de définir les valeurs par défaut de la configuration des champs.
+- unit : "bytes" (l'unité utilisée est les octets).
+- thresholds permet de définir des seuils de valeurs qui modifient l'apparence d'un graphique ou d'un tableau dans Grafana en fonction des valeurs mesurées. C'est une fonctionnalité qui permet d'appliquer une coloration conditionnelle sur un graphique ou un indicateur en fonction des valeurs de données.
+- steps : Ce tableau contient une série de seuils, chaque seuil ayant deux propriétés principales :
+  - color : La couleur qui sera appliquée lorsque la valeur atteindra ce seuil.
+  - value : La valeur à partir de laquelle la couleur change. Cela détermine quand le seuil est atteint.
+    - green: Pas de seuil défini, valeur initiale.
+    - orange: Seuil à 75% d'utilisation de la RAM.
+    - red: Seuil à 90% d'utilisation de la RAM.
+
+```
+    {
+      "type": "graph",
+      "title": "Utilisation du CPU",
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 75 },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        }
+      }
+    }
+  ],
+```
+Panneau 3 : Utilisation du CPU
+- type : "graph" (type de panneau graphique).
+- title : "Utilisation du CPU" (titre du panneau).
+- gridPos : Position du panneau (hauteur de 9, largeur de 12, position x=12, y=9).
+- datasource : "Prometheus" (source de données Prometheus).
+- targets :
+  - expr : "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)" (expression Prometheus pour calculer le pourcentage d'utilisation du CPU en fonction du temps d'inactivité).
+  - refId : "A" (identifiant de la requête).
+- fieldConfig : Cette section définit la configuration spécifique des champs de données dans le panneau. Elle permet de personnaliser l'affichage des valeurs et des unités dans les graphiques ou autres types de panneaux. 
+- defaults : Cette sous-section permet de définir les valeurs par défaut de la configuration des champs.
+- unit : "bytes" (l'unité utilisée est les octets).
+- unit : "percent" (l'unité utilisée est le pourcentage).
+- thresholds permet de définir des seuils de valeurs qui modifient l'apparence d'un graphique ou d'un tableau dans Grafana en fonction des valeurs mesurées. C'est une fonctionnalité qui permet d'appliquer une coloration conditionnelle sur un graphique ou un indicateur en fonction des valeurs de données.
+- steps : Ce tableau contient une série de seuils, chaque seuil ayant deux propriétés principales :
+  - color : La couleur qui sera appliquée lorsque la valeur atteindra ce seuil.
+  - value : La valeur à partir de laquelle la couleur change. Cela détermine quand le seuil est atteint.
+    - green: Pas de seuil défini, valeur initiale.
+    - orange: Seuil à 75% d'utilisation du CPU.
+    - red: Seuil à 90% d'utilisation du CPU.
+
+
+```
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": ["5s", "10s", "30s", "1m", "5m"]
+  },
+```
+3. Temps et Rafraîchissement
+- time : Définit la plage de temps visible sur le dashboard (from: "now-6h", to: "now") — il affiche les données des 6 dernières heures.
+- timepicker : Définit les intervalles de rafraîchissement disponibles pour le timepicker (options comme 5s, 10s, 30s, 1m, 5m).
+  - refresh : Le dashboard se rafraîchira automatiquement toutes les 5 secondes.
+
+```
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "refresh": "5s",
+  "schemaVersion": 17,
+  "version": 1,
+  "links": []
+}
+```
+4. Autres Paramètres
+- templating : Liste vide, il n'y a pas de variables définies pour ce dashboard.
+- annotations : Liste vide, il n'y a pas d'annotations définies.
+- schemaVersion : Version du schéma de configuration (ici 17).
+- version : Version du dashboard (ici 1).
+- links : Liste vide, il n'y a pas de liens associés au dashboard.
+
 ### Docker-compose : 
 
 Maintenant que nous avions vu nos configurations, nous pouvions aller découvrir ce que nous avions configuré avec Docker-compose. Afin d'avoir un maximun de facilité et autres, une grande partie des créations d'image et de conteneur se trouve dans. 
