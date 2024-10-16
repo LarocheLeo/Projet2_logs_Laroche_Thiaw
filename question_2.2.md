@@ -355,6 +355,29 @@ datasources: Cette section contient la définition de plusieurs sources de donn�
 Avant de finir, les deux datasource ne sont pas toutes les deux par défaut pour une raison. Graphana accepte seulement une source par défaut. Donc ici, on met celle qui génére les logs par défaut car c'est la plus importante
 
 ### Dashboards
+
+Comme précedent, ici on va configurer le dashboard. Ca va nous permettre d'automatiser la création de ce dernier lors de la création des conteneurs. On vera dans le chapitre d'après commant créer notre dashboard au pixel près. 
+
+```
+apiVersion: 1
+```
+apiVersion: Indique la version de l'API utilisée pour le provisionnement. Ici, c’est la version 1, qui spécifie le format du fichier de configuration pour les dashboards dans Grafana
+```
+providers:
+  - name: "Projet_logs"
+    folder: ""
+    type: "file"
+    options:
+      path: /etc/grafana/provisioning/dashboards  
+```
+providers: : Cette section définit les "fournisseurs" de dashboards, c'est-à-dire comment Grafana va charger les dashboards à partir de fichiers ou d'autres sources externes.
+- name: "Projet_logs" : C’est le nom du fournisseur de dashboards. Ce nom peut être utilisé pour identifier cette configuration dans Grafana. Ici, il est appelé "Projet_logs", ce qui reflète probablement le projet en cours.
+- folder: "" : Définit le dossier où les dashboards seront stockés dans Grafana. Ici, un dossier vide ("") signifie que les dashboards ne seront pas classés dans un dossier spécifique dans l'interface de Grafana et apparaîtront dans la racine.
+- type: "file" : Spécifie que les dashboards seront importés à partir de fichiers locaux. Le type "file" signifie que Grafana ira chercher les fichiers JSON de dashboards dans le système de fichiers.
+- options: : Cette section contient des options supplémentaires pour le fournisseur de dashboards.
+- path: /etc/grafana/provisioning/dashboards : Définit le chemin où Grafana va chercher les fichiers JSON de dashboards. Ici, il s’agit du dossier /etc/grafana/provisioning/dashboards. Grafana va parcourir ce dossier pour charger tous les dashboards au démarrage ou lors du rechargement.
+
+
 ### Information_logs
 
 ### Docker-compose : 
