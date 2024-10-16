@@ -186,12 +186,12 @@ ingester:
 ingester:Cette section configure l'ingestion des logs, c’est-à-dire la manière dont Loki reçoit, traite, et stocke les logs en tant que chunks.
 
 - wal : Activation du Write Ahead Log (WAL), qui est une méthode de journalisation pour assurer la durabilité des données. Loki écrit d'abord les données dans un fichier WAL avant de les traiter.
-- - dir : le répertoire où ces fichiers WAL sont stockés est /loki/wal.
+  - dir : le répertoire où ces fichiers WAL sont stockés est /loki/wal.
 - lifecycler : le lifecycler est un composant qui gère la coordination et la disponibilité des ingesters
-- - ring: Le ring est une structure de données distribuée utilisée pour suivre et coordonner les ingesters dans un cluster Loki.
-- - - kvstore : Le Key-Value Store (magasin clé-valeur) est l'endroit où l'état du ring est stocké. Il contient des informations cruciales comme les adresses IP des ingesters, leurs responsabilités (portions de données qu'ils gèrent) et leurs statuts (actif, en panne, etc.).
-- - - - store: inmemory : Stocke cette information en mémoire (utile pour des configurations simples ou tests).
-- - - replication_factor: 1 : Aucun mécanisme de réplication n'est utilisé (valeur à 1), donc les données ne sont pas redondantes.
+  - ring: Le ring est une structure de données distribuée utilisée pour suivre et coordonner les ingesters dans un cluster Loki.
+    - kvstore : Le Key-Value Store (magasin clé-valeur) est l'endroit où l'état du ring est stocké. Il contient des informations cruciales comme les adresses IP des ingesters, leurs responsabilités (portions de données qu'ils gèrent) et leurs statuts (actif, en panne, etc.).
+      - store: inmemory : Stocke cette information en mémoire (utile pour des configurations simples ou tests).
+    - replication_factor: 1 : Aucun mécanisme de réplication n'est utilisé (valeur à 1), donc les données ne sont pas redondantes.
 - chunk_idle_period: 3m : Si aucun nouveau log n'arrive dans un chunk pendant 3 minutes, ce chunk sera fermé et prêt à être stocké.
 - max_chunk_age: 1h : Un chunk ne peut pas dépasser 1 heure d'âge. Après cette durée, il sera forcé à être fermé, même s'il continue de recevoir des logs.
 - chunk_retain_period: 30s : Après qu'un chunk est marqué comme prêt à être déplacé vers le stockage permanent, il est conservé pendant 30 secondes avant d'être supprimé de la mémoire.
@@ -211,18 +211,18 @@ schema_config:
 schema_config: Cette section définit la configuration du schéma utilisé par Loki pour stocker et indexer les logs.
 
 - configs :  Dans Loki, la section configs au sein de schema_config permet de définir la structure et le comportement du schéma d'indexation des logs sur une période de temps spécifique.
-- - from: 2023-01-01 : Ce schéma est en vigueur à partir du 1er janvier 2023.
+  - from: 2023-01-01 : Ce schéma est en vigueur à partir du 1er janvier 2023.
 
-- - store: boltdb-shipper : Utilise BoltDB Shipper pour gérer les index. Cela permet une meilleure gestion des index en les déplaçant vers un stockage partagé.
+  - store: boltdb-shipper : Utilise BoltDB Shipper pour gérer les index. Cela permet une meilleure gestion des index en les déplaçant vers un stockage partagé.
 
-- - object_store: filesystem : Les objets (chunks de logs) sont stockés sur le système de fichiers local. Cela signifie que Loki ne s'appuie pas sur un service d'objets distants comme S3 ou GCS.
+  - object_store: filesystem : Les objets (chunks de logs) sont stockés sur le système de fichiers local. Cela signifie que Loki ne s'appuie pas sur un service d'objets distants comme S3 ou GCS.
 
-- - schema: v11 : Utilise la version 11 du schéma, qui est une version optimisée pour des performances accrues.
+  - schema: v11 : Utilise la version 11 du schéma, qui est une version optimisée pour des performances accrues.
 
-- - index : la section index fait référence à la manière dont les logs sont indexés, c'est-à-dire comment les données sont organisées pour faciliter la recherche rapide.
+  - index : la section index fait référence à la manière dont les logs sont indexés, c'est-à-dire comment les données sont organisées pour faciliter la recherche rapide.
 
-- - - prefix: index_ : Les index des logs stockés auront pour préfixe "index_", ce qui permet de les identifier facilement.
-- - - period: 24h : Un nouvel index est créé tous les 24 heures.
+    - prefix: index_ : Les index des logs stockés auront pour préfixe "index_", ce qui permet de les identifier facilement.
+    - period: 24h : Un nouvel index est créé tous les 24 heures.
 
 ```
 storage_config:
@@ -237,13 +237,13 @@ storage_config: Cette section configure le stockage des logs et des index.
 
 - boltdb_shipper : boltdb_shipper est un composant crucial pour le stockage des index de logs lorsque Loki est configuré pour être distribué. Il permet de gérer l'indexation des logs de manière locale tout en assurant la synchronisation avec un stockage centralisé pour les déploiements distribués.
 
-- - active_index_directory: /loki/index : Le répertoire où sont stockés les index actifs sur le disque local.
-- - cache_location: /loki/cache : Emplacement du cache pour améliorer les performances de lecture des index.
-- - shared_store: filesystem : Le stockage partagé est ici le système de fichiers local.
+  - active_index_directory: /loki/index : Le répertoire où sont stockés les index actifs sur le disque local.
+  - cache_location: /loki/cache : Emplacement du cache pour améliorer les performances de lecture des index.
+  - shared_store: filesystem : Le stockage partagé est ici le système de fichiers local.
 
 - filesystem : filesystem est une option de configuration pour le stockage des logs et des index dans un système de fichiers local. Il est souvent utilisé dans des environnements où Loki fonctionne sur une seule machine ou dans des systèmes distribués qui partagent un système de fichiers réseau.
 
-- - directory: /loki/chunks : Répertoire sur le système de fichiers où les chunks de logs (données) sont stockés. Loki divise les logs en chunks pour faciliter le stockage et la recherche.
+  - directory: /loki/chunks : Répertoire sur le système de fichiers où les chunks de logs (données) sont stockés. Loki divise les logs en chunks pour faciliter le stockage et la recherche.
 
 ```
 limits_config:
@@ -455,7 +455,7 @@ Panneau 1 : Logs Nginx
 - custom: {} : indique qu'il n'y a aucune configuration personnalisée par défaut. Si des personnalisations étaient nécessaires, elles seraient ajoutées dans ce bloc sous forme d'options spécifiques, mais ici ce champ est vide, ce qui signifie qu'aucune personnalisation n'est appliquée par défaut.
 - overrides : Cette sous-section permet de définir des personnalisations spécifiques pour certains champs particuliers, en fonction de leurs caractéristiques ou de leurs valeurs.
 Ici, la liste est vide ([]), ce qui signifie qu'il n'y a pas d'overrides (modifications spécifiques pour des champs particuliers) appliquées. 
-  - 
+
 ```
     {
       "type": "graph",
@@ -612,10 +612,10 @@ services:
 ```
 services : La section services: dans un fichier Docker Compose est utilisée pour définir et configurer plusieurs services (ou conteneurs Docker) qui vont tourner ensemble dans un même environnement orchestré. Chaque service représente un conteneur Docker indépendant qui peut être configuré, connecté aux autres services, et exposé avec des ports et volumes.
 - Loki : création du contener loki pour pouvoir l'utiliser.
-- - Image : Utilisation la version 2.9.2 de l'image officielle de Loki, qui est un agrégateur de logs conçu pour être efficace et léger par rapport à des solutions comme ELK.
-- - Ports : Mappe le port 3100 du conteneur au port 3100 de l'hôte. C'est le port par défaut pour accéder à Loki via HTTP.
-- - Command : Spécifie l'emplacement du fichier de configuration personnalisé de Loki, ici /etc/loki/local-config.yaml.
-- - Networks : Le conteneur Loki est connecté à un réseau personnalisé appelé my_network, ce qui permet à tous les services de communiquer entre eux à l'intérieur du même réseau isolé.
+  - Image : Utilisation la version 2.9.2 de l'image officielle de Loki, qui est un agrégateur de logs conçu pour être efficace et léger par rapport à des solutions comme ELK.
+  - Ports : Mappe le port 3100 du conteneur au port 3100 de l'hôte. C'est le port par défaut pour accéder à Loki via HTTP.
+  - Command : Spécifie l'emplacement du fichier de configuration personnalisé de Loki, ici /etc/loki/local-config.yaml.
+  - Networks : Le conteneur Loki est connecté à un réseau personnalisé appelé my_network, ce qui permet à tous les services de communiquer entre eux à l'intérieur du même réseau isolé.
 ```
   promtail:
     image: grafana/promtail:2.9.2
@@ -627,12 +627,12 @@ services : La section services: dans un fichier Docker Compose est utilisée pou
       - my_network
 ```
 - promtail : création du contener promtail pour pouvoir l'utiliser.
-- - Image : Utilisation la version 2.9.2 de Promtail, qui est l'agent qui collecte les logs à partir de fichiers (comme ceux de Nginx), les étiquette, et les envoie à Loki.
-- - Volumes :
-- - - ./promtail-config.yaml:/etc/promtail/config.yml : Le fichier de configuration promtail-config.yaml est monté à l'intérieur du conteneur pour indiquer à Promtail où chercher les logs et comment les traiter.
-- - - /var/log/nginx/:/var/log/nginx : Le répertoire /var/log/nginx/ est monté pour que Promtail puisse accéder aux logs générés par Nginx et les envoyer à Loki.
-- - Command : Indique à Promtail d'utiliser le fichier de configuration monté.
-- - Networks : Connecté au même réseau personnalisé my_network que Loki et les autres services, permettant une communication sans problème avec Loki via son URL interne.
+  - Image : Utilisation la version 2.9.2 de Promtail, qui est l'agent qui collecte les logs à partir de fichiers (comme ceux de Nginx), les étiquette, et les envoie à Loki.
+  - Volumes :
+    - ./promtail-config.yaml:/etc/promtail/config.yml : Le fichier de configuration promtail-config.yaml est monté à l'intérieur du conteneur pour indiquer à Promtail où chercher les logs et comment les traiter.
+    - /var/log/nginx/:/var/log/nginx : Le répertoire /var/log/nginx/ est monté pour que Promtail puisse accéder aux logs générés par Nginx et les envoyer à Loki.
+  - Command : Indique à Promtail d'utiliser le fichier de configuration monté.
+  - Networks : Connecté au même réseau personnalisé my_network que Loki et les autres services, permettant une communication sans problème avec Loki via son URL interne.
 ```
   grafana:
     image: grafana/grafana:latest
@@ -640,17 +640,50 @@ services : La section services: dans un fichier Docker Compose est utilisée pou
       - "3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./provisioning/dashboards:/etc/grafana/provisioning/dashboards  # Modifier le chemin pour éviter des conflits
+      - ./provisioning/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./provisioning/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
     networks:
-      - my_network  # Connecte Grafana au réseau personnalisé
+      - my_network
 ```
 - grafana : création du contener grafana pour pouvoir l'utiliser.
-- - Image : Utilisation l'image la plus récente de Grafana, un outil de visualisation des données. Grafana permet de visualiser les logs envoyés à Loki via des tableaux de bord.
-- - Ports : Le port 3000 est mappé de l'intérieur du conteneur vers l'hôte, permettant d'accéder à l'interface de Grafana via localhost:3000.
-- - Volumes : Le volume grafana-data est utilisé pour stocker les données persistantes de Grafana (paramètres, tableaux de bord, etc.).
-- - Environment : Définit le mot de passe administrateur initial avec la variable GF_SECURITY_ADMIN_PASSWORD. Ici, le mot de passe est admin (par défaut).
-- - Networks : Connecté à my_network, permettant à Grafana de communiquer avec Loki et Promtail directement via le réseau Docker.
+  - Image : Utilisation l'image la plus récente de Grafana, un outil de visualisation des données. Grafana permet de visualiser les logs envoyés à Loki via des tableaux de bord.
+  - Ports : Le port 3000 est mappé de l'intérieur du conteneur vers l'hôte, permettant d'accéder à l'interface de Grafana via localhost:3000.
+  - Volumes : Le volume grafana-data est utilisé pour stocker les données persistantes de Grafana (paramètres, tableaux de bord, etc.).
+  - Environment : Définit le mot de passe administrateur initial avec la variable GF_SECURITY_ADMIN_PASSWORD. Ici, le mot de passe est admin (par défaut).
+  - Networks : Connecté à my_network, permettant à Grafana de communiquer avec Loki et Promtail directement via le réseau Docker.
+```
+ prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - my_network
+```
+- image : Utilise l'image prom/prometheus:latest pour Prometheus, l'outil de collecte de métriques.
+- volumes :
+  - Monte le fichier prometheus.yml pour fournir la configuration de Prometheus.
+  - Monte un volume pour stocker les données de Prometheus de façon persistante.
+- ports : Mappe le port 9090 du conteneur au port 9090 de l'hôte.
+- networks : Prometheus fait partie du réseau my_network.
+```
+  node_exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+    networks:
+      - my_network
+```
+- image : Utilise l'image prom/node-exporter:latest pour exporter des métriques sur l'état du système.
+- ports : Mappe le port 9100 du conteneur au port 9100 de l'hôte.
+- networks : Node Exporter fait partie du réseau my_network.
 ```
   nginx:  # Nouveau service pour Nginx
     build: D:/Cours_3e_annee/SAE/projet2/version_final  # Remplace par le chemin vers ton Dockerfile Nginx
@@ -662,18 +695,18 @@ services : La section services: dans un fichier Docker Compose est utilisée pou
       - my_network  # Connecte Nginx au réseau personnalisé
 ```
 - nginx : création du contener nginx pour pouvoir l'utiliser.
-- - Build : Indique que Nginx sera construit à partir d'un Dockerfile situé dans le répertoire spécifié (dans cet exemple, un chemin local sur ton système).
-- - Ports : Le port 80 est exposé, permettant à Nginx de répondre aux requêtes HTTP via localhost:80.
-- - Volumes : Monte le répertoire des logs Nginx (/var/log/nginx/) à la fois sur l'hôte et dans le conteneur, permettant à Promtail de lire les logs générés par Nginx.
-- - Networks : Connecté à my_network pour que Nginx puisse interagir avec d'autres services sur le réseau, comme Promtail pour le transfert des logs.
+  - Build : Indique que Nginx sera construit à partir d'un Dockerfile situé dans le répertoire spécifié (dans cet exemple, un chemin local sur ton système).
+  - Ports : Le port 80 est exposé, permettant à Nginx de répondre aux requêtes HTTP via localhost:80.
+  - Volumes : Monte le répertoire des logs Nginx (/var/log/nginx/) à la fois sur l'hôte et dans le conteneur, permettant à Promtail de lire les logs générés par Nginx.
+  - Networks : Connecté à my_network pour que Nginx puisse interagir avec d'autres services sur le réseau, comme Promtail pour le transfert des logs.
 ```
 volumes:
   loki-data:
   grafana-data:
+  prometheus-data:
 ```
-volumes: La section volumes dans un fichier Docker Compose est utilisée pour définir des volumes qui sont des zones de stockage persistant pour les données générées ou utilisées par les conteneurs. 
-- loki-data 
-- grafana-data : Ces volumes permettent de persister les données des services Loki et Grafana. Cela signifie que les données de logs (pour Loki) et les tableaux de bord/configurations (pour Grafana) ne seront pas perdus si les conteneurs sont arrêtés ou redémarrés.
+Déclare les volumes Docker utilisés pour stocker les données persistantes des services Loki, Grafana, et Prometheus. Ces volumes permettent de préserver les données même si les conteneurs sont arrêtés ou supprimés.
+
 ```
 networks:
   my_network:   
@@ -684,6 +717,8 @@ networks : La section networks dans un fichier Docker Compose définit les rése
 ### Remarque de fin : 
 
 Après avoir réalisé ce projet, nous avions bien-sûr quelques idées d'amélioration de ce qu'on pourrait faire en plus. Ces « améliorations » sont surtout des fonctionnalités qu'on n'a pas pu mettre par manque de temps. Ces idées étaient de mettre plus d'information sur le système host comme les ressources CPU utilisées, les paquets envoyés ou autre information. 
+
+Mais comme vous le voyait pendant les heures en plus donner nous avions rajouter ces fonctionnalitées. Même si, on avait vulue  en plus mettre le stockage utiliser sur le disque dur. Nous avions pas réussi à le faire correctement. Donc nous l'avions simplement retirer cette options.
 
 Nous vous remercions d'avoir lu ce markdown jusqu'au bout.
 
