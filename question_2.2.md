@@ -306,6 +306,54 @@ La section scrape_configs définit les différentes cibles ou groupes de cibles 
  - targets: ['node_exporter:9100'] : La cible est le service node_exporter sur le port 9100, qui est le port par défaut pour exporter les métriques système (CPU, mémoire, etc.) à l'aide de Node Exporter.
 
 ### Datasource
+#### A quoi sert une datasource ? 
+Une datasource dans Grafana est une source de données externe à partir de laquelle Grafana extrait les informations pour visualiser et surveiller des métriques ou des logs. Elle permet de connecter Grafana à des systèmes comme Prometheus, Loki, ou Elasticsearch, afin de récupérer des données, les analyser et les afficher sous forme de graphiques, tableaux ou alertes dans des tableaux de bord interactifs.
+
+Mais pourquoi faire un programme dessus ? Tout simplement ça va permettre de pouvoir configurer graphana automatiquement.  
+
+```
+apiVersion: 1
+```
+apiVersion: Indique la version de l'API utilisée pour la configuration de provisionnement des datasources. Ici, c'est la version 1.
+
+```
+datasources:
+```
+datasources: Cette section contient la définition de plusieurs sources de données. Chaque bloc sous cette section représente une datasource à configurer dans Grafana.
+
+```
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090  # Vérifie que l'URL correspond à ton conteneur Prometheus
+    isDefault: false
+    editable: true
+```
+- name: Prometheus : Nom de la datasource. Ce nom apparaîtra dans Grafana lors de la sélection de cette source de données.
+- type: prometheus : Spécifie que la datasource est de type Prometheus, qui est un outil de monitoring et d'alerte utilisé pour collecter et analyser des métriques.
+- access: proxy : Définit comment Grafana accède à cette datasource. En mode proxy, Grafana agit comme intermédiaire pour faire les requêtes depuis le serveur vers la datasource.
+- url: http://prometheus:9090 : URL à laquelle Grafana peut accéder à l'instance Prometheus. Elle doit correspondre à l'adresse du conteneur Prometheus.
+- isDefault: false : Indique que cette datasource n'est pas définie comme la source par défaut.
+- editable: true : Permet de rendre cette datasource modifiable via l'interface utilisateur de Grafana.
+
+```
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100 
+    isDefault: true
+    jsonData:
+      maxLines: 1000
+```
+- name: Loki : Nom de la datasource. Elle est définie pour Loki, un système de gestion des logs développé par Grafana Labs.
+- type: loki : Spécifie que la datasource est de type Loki, utilisée pour la collecte et la recherche de logs.
+- access: proxy : Comme pour Prometheus, Grafana agit en mode proxy pour accéder à Loki.
+- url: http://loki:3100 : URL à laquelle Grafana accède au service Loki pour récupérer les logs. Ici, il s'agit de l'adresse du conteneur Loki.
+- isDefault: true : Loki est défini comme la datasource par défaut, ce qui signifie que les requêtes qui ne spécifient pas de datasource utiliseront Loki par défaut.
+- jsonData.maxLines: 1000 : Ce paramètre limite le nombre maximum de lignes de logs que Loki retourne dans une requête, ici fixé à 1000 lignes.
+
+Avant de finir, les deux datasource ne sont pas toutes les deux par défaut pour une raison. Graphana accepte seulement une source par défaut. Donc ici, on met celle qui génére les logs par défaut car c'est la plus importante
+
 ### Dashboards
 ### Information_logs
 
