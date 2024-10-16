@@ -33,6 +33,22 @@ services:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
     networks:
       - my_network
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - my_network
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+    networks:
+      - my_network
 
   nginx:
     build: D:/Cours_3e_annee/SAE/projet2/version_final
@@ -46,6 +62,7 @@ services:
 volumes:
   loki-data:
   grafana-data:
+  prometheus-data:
 
 networks:
   my_network:
