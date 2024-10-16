@@ -720,5 +720,11 @@ Après avoir réalisé ce projet, nous avions bien sûr quelques idées d'améli
 
 Mais comme vous le voyez pendant les heures en plus données, nous avions rajouter ces fonctionnalités. Même si on avait voulu en plus mettre le stockage utilisé sur le disque dur. Nous n’avions pas réussi à le faire correctement. Donc nous l'avions simplement retiré cette option.
 
+Ce projet n'était pas simple mais instructif ce qui nous à permis d'évoluer nos techniques et notres compréhensions de notre outils. 
+Nous avions eu des échecs que nous avions réussi à surmonter, comme le conteneur loki qui ne voulais pas ce lancer. Mais nous avions eu d'autre problèmes comme malheureusement les données sur le disque dur que nous avions pas réussir à finaliser. 
+
+Si je devais refaire ce projet, sa serait avec un grand plaisir. 
+
 Nous vous remercions d'avoir lu ce Markdown jusqu'au bout.
 
+Ce markdown et tous les programmes, on était principalement fait par Laroche.
