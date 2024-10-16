@@ -13,7 +13,7 @@
 
 ## Codage des différents conteneurs  
 
-Pour la création de nos conteneurs, on a décidé de générer un dockerfile qui servira à la création du conteneur générateur de logs et un docker-compose pour la collecte de logs. Nous avions décidé ainsi pour deux raisons : la première, c'était tout simplement la demande du cahier des charges, mais ensuite, la seconde raison est qu'en cours de route, nous avions eu l'information qu'on pouvrait utiliser docker-compose, donc, pour la simplicité, on va l'utiliser pour la seconde partie qui est bien plus complexe que le docker-compose.
+Pour la création de nos conteneurs, on a décidé de générer un dockerfile qui servira à la création du conteneur générateur de logs et un docker-compose pour la collecte de logs et deux autres informations la rame et le cpu utiliser. Nous avions décidé ainsi pour deux raisons : la première, c'était tout simplement la demande du cahier des charges, mais ensuite, la seconde raison est qu'en cours de route, nous avions eu l'information qu'on pouvrait utiliser docker-compose, donc, pour la simplicité, on va l'utiliser pour la seconde partie qui est bien plus complexe que le docker-compose.
 
 ### Génération des logs
 
@@ -70,15 +70,19 @@ Pour finir, afin que tout fonctionne, nous envoyons tout sur le port 80. On va u
 
 ### Collecte de logs
 
-Maintenant que nous avions terminé avec notre génération de logs, on va regarder comment nous avions configuré notre docker-compose et nos différents fichiers qui l'accompagnent. Pour commencer, notre solution est composé de 3 fichier : 
+Maintenant que nous avions terminé avec notre génération de logs, on va regarder comment nous avions configuré notre docker-compose et nos différents fichiers qui l'accompagnent. Pour commencer, notre solution est composé de plusieurs fichiers : 
 
 - Le docker-compose.
+- La configuration de loki en fichier yaml
+- La configuration de promtail en fichier yaml
+- un fichier yml pour prometheus
+- un ficher yaml nommer datasource
+- un autre yaml nommer dashboards
+- et pour finir un ficher json nommer information_logs
 
-- Et 2 fichiers config en yaml.
+Mais avant aussi d'aller plus loin. Qu'elle est notre solution ? Notre solution est « simple », on va utiliser différents logiciels. Graphana qui va nous permettre d'afficher nos différentes informations. Graphana Loki qui va pouvoir transmettre les informations qu'on récupère avec Promtail pour les envoyer à Graphana. Et donc, on utilisera Promtail comme dit précédemment pour que Loki puisse lire les données envoyées, car Loki ne pouvait pas faire cela directement après nos recherches. Pour finir, on va utiliser prometheus qui va nous permetrre de collecter des métriques en temps réel comme la consomation de ram et cpu. 
 
-Mais avant aussi d'aller plus loin. Qu'elle est notre solution ? Notre solution est « simple », on va utiliser 3 logiciels. Graphana qui va nous permettre d'afficher nos différentes informations. Graphana Loki qui va pouvoir transmettre les informations qu'on récupère avec Promtail pour les envoyer à Graphana. Et donc, on utilisera Promtail comme dit précédemment pour que Loki puisse lire les données envoyées, car Loki ne pouvait pas faire cela directement après nos recherches. 
-
-Pour cette présentation, on va présenter par chapitre nos codes. En premier, nos fichiers config avec Promtail puis Loki, enfin, nous allions terminer notre présentation avec le docker-compose.
+Pour cette présentation, on va présenter par chapitre nos codes. En premier, nos fichiers config avec Promtail puis Loki et nos autre fichier utiliser, nous allions terminer notre présentation avec le docker-compose.
 
 ### Promtail 
 
@@ -137,13 +141,13 @@ Cette section définit un "job" de scraping de logs, ici nommé nginx-logs. Chaq
 - static_configs :
 Cela permet de définir des configurations statiques, c’est-à-dire des sources de logs dont les chemins ne changent pas. On utilise cette configuration pour les fichiers de logs situés sur le disque, comme dans le cas des logs Nginx ici.
 
-- - targets : Permet de cibles ce qu'on veut surveiller.
-- - - localhost : Cela spécifie que Promtail va surveiller les logs sur la machine locale.
+  - targets : Permet de cibles ce qu'on veut surveiller.
+    - localhost : Cela spécifie que Promtail va surveiller les logs sur la machine locale.
 
-- - labels : Les labels sont des métadonnées associées aux logs pour mieux les catégoriser dans Loki.
-- - - job: nginx : Est un label job ajouté aux logs pour identifier qu'ils proviennent du job nginx. Ce label sera utilisé par Loki et Grafana pour filtrer et requêter les logs. C’est un label très utile pour regrouper les logs d’un même service.
+  - labels : Les labels sont des métadonnées associées aux logs pour mieux les catégoriser dans Loki.
+    - job: nginx : Est un label job ajouté aux logs pour identifier qu'ils proviennent du job nginx. Ce label sera utilisé par Loki et Grafana pour filtrer et requêter les logs. C’est un label très utile pour regrouper les logs d’un même service.
   
-- - - path: /var/log/nginx/*.log : path est un chemin vers les fichiers de logs que Promtail doit surveiller. Ici, il est configuré pour suivre tous les fichiers logs se trouvant dans /var/log/nginx/ (via le masque *.log qui capture tous les fichiers se terminant par .log).
+    - path: /var/log/nginx/*.log : path est un chemin vers les fichiers de logs que Promtail doit surveiller. Ici, il est configuré pour suivre tous les fichiers logs se trouvant dans /var/log/nginx/ (via le masque *.log qui capture tous les fichiers se terminant par .log).
 
 
 ### Loki
@@ -269,6 +273,41 @@ table_manager: table_manager dans la configuration de Loki est responsable de la
 - retention_deletes_enabled: false : Désactive la suppression des anciens chunks basée sur une politique de rétention.
 - retention_period: 0s : Le délai de rétention des logs est défini à 0s, ce qui signifie qu'aucune rétention (suppression automatique des anciens logs) n'est activée.
 
+### Prometheus
+
+Avant de commencer, c'est quoi prometheuse exactement ? Prometheus est une plateforme open-source de surveillance et d'alerte, conçue pour collecter des métriques en temps réel à partir d'applications et d'infrastructures. Il stocke ces données sous forme de séries temporelles et permet de les interroger via un langage de requête, tout en offrant des fonctionnalités d'alertes basées sur les seuils définis.
+
+maintenant le code : 
+
+```
+global: 
+  scrape_interval: 15s
+```
+avec global on va configurer les paramètres globaux de prometheus
+-  scrape_interval: 15s : Définit l'intervalle global pour la collecte des métriques. Ici, Prometheus collecte les métriques toutes les 15 secondes depuis les cibles configurées. C'est une configuration globale qui s'applique à toutes les tâches de scraping
+```
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+```
+La section scrape_configs définit les différentes cibles ou groupes de cibles dont Prometheus doit collecter les métriques. Chaque tâche est configurée avec un job_name et une ou plusieurs cibles (targets)
+- job_name : Cette tâche de scraping est nommée prometheus. Cela signifie que Prometheus va surveiller ses propres métriques (auto-surveillance).
+- static_configs : Liste les cibles statiques pour cette tâche.
+  - targets: ['localhost:9090'] : La cible est localhost (machine locale) sur le port 9090, qui est le port par défaut où Prometheus expose ses propres métriques.
+
+```
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['node_exporter:9100']
+```
+- job_name : Cette tâche est nommée node_exporter, ce qui indique que Prometheus va surveiller un autre service, ici le Node Exporter.
+- static_configs : Liste les cibles statiques pour cette tâche.
+ - targets: ['node_exporter:9100'] : La cible est le service node_exporter sur le port 9100, qui est le port par défaut pour exporter les métriques système (CPU, mémoire, etc.) à l'aide de Node Exporter.
+
+### Datasource
+### Dashboards
+### Information_logs
 
 ### Docker-compose : 
 
